@@ -1,0 +1,43 @@
+$date
+	Wed Aug 12 11:21:08 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module Half_Add_tb $end
+$var wire 1 ! o2 $end
+$var wire 1 " o1 $end
+$var reg 1 # in1 $end
+$var reg 1 $ in2 $end
+$scope module add $end
+$var wire 1 # A $end
+$var wire 1 $ B $end
+$var reg 1 ! C $end
+$var reg 1 " O $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+0$
+0#
+0"
+0!
+$end
+#1000
+1"
+1$
+#2000
+0$
+1#
+#3000
+1!
+0"
+1$
+#4000

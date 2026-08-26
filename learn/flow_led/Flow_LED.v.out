@@ -1,0 +1,78 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+S_0000014b7dd62d20 .scope module, "Flow_LED" "Flow_LED" 2 2;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "rst";
+    .port_info 2 /OUTPUT 8 "led";
+o0000014b7dd96f88 .functor BUFZ 1, C4<z>; HiZ drive
+v0000014b7dd62eb0_0 .net "clk", 0 0, o0000014b7dd96f88;  0 drivers
+v0000014b7dd62f50_0 .var "counter", 6 0;
+v0000014b7dd62ff0_0 .var "led", 7 0;
+o0000014b7dd97018 .functor BUFZ 1, C4<z>; HiZ drive
+v0000014b7dd63090_0 .net "rst", 0 0, o0000014b7dd97018;  0 drivers
+E_0000014b7dd95530 .event posedge, v0000014b7dd63090_0, v0000014b7dd62eb0_0;
+    .scope S_0000014b7dd62d20;
+T_0 ;
+    %wait E_0000014b7dd95530;
+    %load/vec4 v0000014b7dd63090_0;
+    %pad/u 32;
+    %cmpi/e 1, 0, 32;
+    %jmp/0xz  T_0.0, 4;
+    %pushi/vec4 0, 0, 7;
+    %assign/vec4 v0000014b7dd62f50_0, 0;
+    %jmp T_0.1;
+T_0.0 ;
+    %load/vec4 v0000014b7dd62f50_0;
+    %cmpi/e 49, 0, 7;
+    %jmp/0xz  T_0.2, 4;
+    %pushi/vec4 0, 0, 7;
+    %assign/vec4 v0000014b7dd62f50_0, 0;
+    %jmp T_0.3;
+T_0.2 ;
+    %load/vec4 v0000014b7dd62f50_0;
+    %addi 1, 0, 7;
+    %assign/vec4 v0000014b7dd62f50_0, 0;
+T_0.3 ;
+T_0.1 ;
+    %jmp T_0;
+    .thread T_0;
+    .scope S_0000014b7dd62d20;
+T_1 ;
+    %wait E_0000014b7dd95530;
+    %load/vec4 v0000014b7dd63090_0;
+    %pad/u 32;
+    %cmpi/e 1, 0, 32;
+    %jmp/0xz  T_1.0, 4;
+    %pushi/vec4 1, 0, 8;
+    %assign/vec4 v0000014b7dd62ff0_0, 0;
+    %jmp T_1.1;
+T_1.0 ;
+    %load/vec4 v0000014b7dd62f50_0;
+    %cmpi/e 49, 0, 7;
+    %jmp/0xz  T_1.2, 4;
+    %load/vec4 v0000014b7dd62ff0_0;
+    %ix/load 4, 1, 0;
+    %flag_set/imm 4, 0;
+    %shiftl 4;
+    %assign/vec4 v0000014b7dd62ff0_0, 0;
+    %jmp T_1.3;
+T_1.2 ;
+    %load/vec4 v0000014b7dd62ff0_0;
+    %assign/vec4 v0000014b7dd62ff0_0, 0;
+T_1.3 ;
+T_1.1 ;
+    %jmp T_1;
+    .thread T_1;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "Flow_LED.v";

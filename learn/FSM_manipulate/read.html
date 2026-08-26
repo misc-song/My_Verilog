@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2027黑大外哲考研124天冲刺计划</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f0f4f8; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { max-width: 1400px; width: 100%; background: #fff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); padding: 30px 25px; overflow-x: auto; }
+        h1 { font-size: 26px; color: #1a2a4a; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        h1 small { font-size: 15px; font-weight: 400; color: #6b7a8f; }
+        .sub { color: #5a6a7e; font-size: 15px; margin-bottom: 20px; border-left: 4px solid #2a7de1; padding-left: 16px; background: #f7faff; border-radius: 0 8px 8px 0; line-height: 1.7; }
+        .toolbar { display: flex; gap: 12px; margin: 18px 0 22px 0; flex-wrap: wrap; }
+        .toolbar button { padding: 10px 26px; border: none; border-radius: 30px; font-size: 15px; font-weight: 600; cursor: pointer; background: #eef2f7; color: #1a2a4a; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .toolbar button:hover { background: #dce3ec; transform: translateY(-1px); }
+        .toolbar .btn-excel { background: #1e7e34; color: #fff; }
+        .toolbar .btn-excel:hover { background: #146b2a; }
+        .toolbar .btn-word { background: #1856b7; color: #fff; }
+        .toolbar .btn-word:hover { background: #0e4a9e; }
+        table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 1000px; }
+        th { background: #1a2a4a; color: #fff; padding: 14px 10px; text-align: center; font-weight: 600; position: sticky; top: 0; z-index: 10; white-space: nowrap; }
+        td { padding: 12px 10px; border-bottom: 1px solid #e9edf2; vertical-align: top; line-height: 1.6; }
+        tr:hover td { background: #f8faff; }
+        .col-date { text-align: center; font-weight: 600; color: #1a2a4a; white-space: nowrap; }
+        .col-time { text-align: center; color: #4a5a6e; white-space: nowrap; }
+        .col-zy { background: #f5f9ff; }
+        .col-yy { background: #fafff5; }
+        .col-zz { background: #fff8f0; }
+        .col-review { background: #fafafa; font-size: 13px; color: #4a5a6e; }
+        .tag { display: inline-block; padding: 1px 10px; border-radius: 30px; font-size: 11px; font-weight: 600; margin: 1px 2px; }
+        .tag-zy { background: #d4e2ff; color: #1a4a8a; }
+        .tag-yy { background: #d4f0d4; color: #1a6a2a; }
+        .tag-zz { background: #ffe8d0; color: #8a5a1a; }
+        .tag-done { background: #c8e6c9; color: #1e5a2a; }
+        .highlight { background: #fff9c4; padding: 0 4px; border-radius: 4px; }
+        .phase { background: #eef2f7; font-weight: 700; color: #1a2a4a; }
+        @media (max-width: 768px) { .container { padding: 15px; } table { font-size: 12px; min-width: 700px; } th, td { padding: 8px 6px; } }
+    </style>
+</head>
+<body>
+<div class="container" id="planContainer">
+    <h1>📘 2027黑大外哲考研 · 124天冲刺计划 <small>8.19 - 12.20</small></h1>
+    <div class="sub">🎯 目标：11月30日前完成专业课听课+一轮背诵 · 英语词汇+长难句 · 政治听课+配套题</div>
+
+    <div class="toolbar">
+        <button class="btn-excel" onclick="exportExcel()">📊 下载 Excel</button>
+        <button class="btn-word" onclick="exportWord()">📄 下载 Word</button>
+    </div>
+
+    <table id="planTable">
+        <thead>
+            <tr><th>📅 日期</th><th>⏱ 预计时长</th><th>📖 专业课 (768+868)</th><th>🌍 英语（一）</th><th>📰 政治</th><th>✅ 今日复盘</th></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <p style="margin-top:24px;font-size:13px;color:#7a8a9e;text-align:center;border-top:1px solid #e9edf2;padding-top:18px;">📌 每日复盘栏可自行填写完成情况 · 保持节奏，黑大外哲等你上岸！</p >
+</div>
+<script>
+(function() {
+    const start = new Date(2026, 7, 19);
+    const end = new Date(2026, 10, 30);
+    const rows = [];
+    let current = new Date(start);
+
+    // 阶段定义
+    const phases = [
+        { name: '🔥 基础搭建期', start: '8.19', end: '9.20', desc: '听课为主，建立框架' },
+        { name: '⚡ 强化攻坚期', start: '9.21', end: '10.31', desc: '转入背诵+专题' },
+        { name: '🚀 冲刺模考期', start: '11.1', end: '11.30', desc: '真题+模拟+查漏' }
+    ];
+
+    // 专业课内容池
+    const zyPool = {
+        '8.19-8.31': '768马哲史：马克思主义哲学的形成（博士论文→《共产党宣言》）[reference:7]',
+        '9.1-9.10': '768马哲史：政治经济学批判与唯物史观发展[reference:8]',
+        '9.11-9.20': '768马哲史：恩格斯对马哲的发展+列宁对马哲的新发展[reference:9]',
+        '9.21-9.30': '868中哲：先秦哲学（孔孟荀老庄墨韩）[reference:10]',
+        '10.1-10.10': '868中哲：汉唐哲学（董仲舒→刘禹锡）+ 宋明理学（二程张载朱熹王阳明王夫之）[reference:11]',
+        '10.11-10.20': '868西哲：古希腊罗马哲学（前苏格拉底→亚里士多德）+ 中古哲学[reference:12]',
+        '10.21-10.31': '868西哲：近代哲学（英国经验论+大陆唯理论+德国古典）[reference:13]+ 哲学专题[reference:14]',
+        '11.1-11.15': '专业课一轮背诵+真题名词解释/简答训练[reference:15]',
+        '11.16-11.30': '专业课二轮背诵+论述题训练+模拟卷[reference:16]'
+    };
+
+    // 英语内容池
+    const yyPool = {
+        '8.19-9.15': '词汇书：每天100-150新词（红宝书/恋练有词）[reference:17]+ 长难句每日5句',
+        '9.16-10.15': '词汇二轮复习 + 阅读真题（2010-2015）精读，每周4篇[reference:18]',
+        '10.16-11.15': '词汇三轮 + 阅读真题（2016-2020） + 完形/新题型穿插',
+        '11.16-11.30': '词汇查漏 + 阅读真题（2021-2023）+ 作文模板整理'
+    };
+
+    // 政治内容池
+    const zzPool = {
+        '9.1-9.30': '马原+毛中特 听课 + 1000题对应章节[reference:19]',
+        '10.1-10.20': '史纲+思修 听课 + 1000题对应章节',
+        '10.21-11.15': '1000题二刷（重点错题）+ 背诵手册选择题考点',
+        '11.16-11.30': '肖八选择题模拟 + 分析题模板入门[reference:20]'
+    };
+
+    function getPhase(dateStr) {
+        const d = dateStr.replace(/\./g,'');
+        if (d >= '819' && d <= '920') return phases[0];
+        if (d >= '921' && d <= '1031') return phases[1];
+        if (d >= '1101' && d <= '1130') return phases[2];
+        return null;
+    }
+
+    function getWeekPhase(date) {
+        const m = date.getMonth()+1;
+        const d = date.getDate();
+        const key = m+'.'+d;
+        if (key >= '8.19' && key <= '8.31') return '8.19-8.31';
+        if (key >= '9.1' && key <= '9.10') return '9.1-9.10';
+        if (key >= '9.11' && key <= '9.20') return '9.11-9.20';
+        if (key >= '9.21' && key <= '9.30') return '9.21-9.30';
+        if (key >= '10.1' && key <= '10.10') return '10.1-10.10';
+        if (key >= '10.11' && key <= '10.20') return '10.11-10.20';
+        if (key >= '10.21' && key <= '10.31') return '10.21-10.31';
+        if (key >= '11.1' && key <= '11.15') return '11.1-11.15';
+        if (key >= '11.16' && key <= '11.30') return '11.16-11.30';
+        return null;
+    }
+
+    function getZyContent(date) {
+        const key = getWeekPhase(date);
+        return zyPool[key] || '📖 按章节推进，整理笔记框架';
+    }
+
+    function getYyContent(date) {
+        const m = date.getMonth()+1;
+        const d = date.getDate();
+        if (m===8 || (m===9 && d<=15)) return yyPool['8.19-9.15'];
+        if ((m===9 && d>=16) || (m===10 && d<=15)) return yyPool['9.16-10.15'];
+        if ((m===10 && d>=16) || (m===11 && d<=15)) return yyPool['10.16-11.15'];
+        if (m===11 && d>=16) return yyPool['11.16-11.30'];
+        return yyPool['8.19-9.15'];
+    }
+
+    function getZzContent(date) {
+        const m = date.getMonth()+1;
+        const d = date.getDate();
+        if (m===9) return zzPool['9.1-9.30'];
+        if (m===10 && d<=20) return zzPool['10.1-10.20'];
+        if ((m===10 && d>=21) || (m===11 && d<=15)) return zzPool['10.21-11.15'];
+        if (m===11 && d>=16) return zzPool['11.16-11.30'];
+        return '📚 按计划推进';
+    }
+
+    function getTimeEstimate(date) {
+        const m = date.getMonth()+1;
+        const d = date.getDate();
+        if (m===8) return '7.5h';
+        if (m===9) return '8h';
+        if (m===10) return '8.5h';
+        if (m===11 && d<=15) return '9h';
+        return '8.5h';
+    }
+
+    function getReview(date) {
+        const m = date.getMonth()+1;
+        const d = date.getDate();
+        const weekdays = ['日','一','二','三','四','五','六'];
+        const wd = weekdays[date.getDay()];
+        let base = `📝 第${Math.ceil((date - new Date(2026,7,19))/(1000*60*60*24))}天 · 周${wd}`;
+        if (d===1 && m===9) return base + ' 🔔 9月！政治可以启动了';
+        if (d===1 && m===10) return base + ' 🔔 国庆假期·弯道超车黄金周';
+        if (d===1 && m===11) return base + ' 🔔 冲刺月！真题必须提上日程';
+        if (d%7===0) return base + ' 📌 周复盘日：回顾本周进度';
+        if (d%10===0) return base + ' 📌 阶段小结：检查完成度';
+        return base;
+    }
+
+    // 生成104行数据
+    let dayCount = 0;
+    while (current <= end) {
+        dayCount++;
+        const dateStr = (current.getMonth()+1).toString().padStart(2,'0')+'.'+current.getDate().toString().padStart(2,'0');
+        const phase = getPhase(dateStr);
+        const phaseLabel = phase ? `<span class="tag" style="background:#d0d8e8;color:#1a2a4a;">${phase.name}</span>` : '';
+        const zy = getZyContent(current);
+        const yy = getYyContent(current);
+        const zz = getZzContent(current);
+        const time = getTimeEstimate(current);
+        const review = getReview(current);
+
+        rows.push({
+            date: dateStr,
+            time: time,
+            zy: zy,
+            yy: yy,
+            zz: zz,
+            review: review,
+            phase: phase ? phase.name : ''
+        });
+        current.setDate(current.getDate() + 1);
+    }
+
+    // 渲染表格
+    const tbody = document.getElementById('tableBody');
+    rows.forEach(r => {
+        const tr = document.createElement('tr');
+        const phaseClass = r.phase ? 'phase' : '';
+        tr.innerHTML = `
+            <td class="col-date">${r.date}</td>
+            <td class="col-time">${r.time}</td>
+            <td class="col-zy">${r.zy}</td>
+            <td class="col-yy">${r.yy}</td>
+            <td class="col-zz">${r.zz}</td>
+            <td class="col-review">${r.review}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // 导出Excel
+    window.exportExcel = function() {
+        let csv = "日期,预计时长,专业课(768+868),英语(一),政治,今日复盘\n";
+        rows.forEach(r => {
+            const line = `"${r.date}","${r.time}","${r.zy.replace(/"/g,'""')}","${r.yy.replace(/"/g,'""')}","${r.zz.replace(/"/g,'""')}","${r.review.replace(/"/g,'""')}"`;
+            csv += line + "\n";
+        });
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = '黑大外哲考研_104天计划表.csv';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    };
+
+    // 导出Word
+    window.exportWord = function() {
+        let html = `<h1>2027黑大外哲考研 · 104天冲刺计划 (8.19-11.30)</h1><table border="1" cellpadding="6" style="border-collapse:collapse;font-size:12px;width:100%;">`;
+        html += `<tr><th>日期</th><th>预计时长</th><th>专业课</th><th>英语</th><th>政治</th><th>今日复盘</th></tr>`;
+        rows.forEach(r => {
+            html += `<tr><td>${r.date}</td><td>${r.time}</td><td>${r.zy}</td><td>${r.yy}</td><td>${r.zz}</td><td>${r.review}</td></tr>`;
+        });
+        html += `</table>`;
+        const blob = new Blob([html], { type: 'application/msword;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = '黑大外哲考研_104天计划表.doc';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    };
+})();
+</script>
+</body>
+</html>
