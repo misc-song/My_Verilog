@@ -28,6 +28,11 @@ key_filter #(
 
 //================ 时钟生成 ================
 always # (CLK_PERIOD/2) clk = ~clk;
+initial begin
+    $dumpfile("wave.vcd");
+    $dumpvars(0,key_filter_tb);
+end
+
 
 //================ 复位与激励产生 ================
 initial begin
@@ -37,9 +42,9 @@ initial begin
     key_in = 1'b1;  // 按键默认释放（高电平）
 
     // 复位释放
-    #100;
+    # 100;
     rst_n = 1;
-    #200;  // 等待稳定
+    # 200;  // 等待稳定
 
     // ------ 第一次按键：正常按下并释放（带抖动） ------
     // 1. 按下开始，先出现抖动
