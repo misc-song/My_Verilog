@@ -1,0 +1,66 @@
+module top_lcd_st7789(
+    input               clk_50m,        // DE25‑Nano 系统时钟50MHz
+    input               sys_rst_n,      // FPGA PIN_C8, 低电平复位
+
+    output              lcd_sclk,       // H16
+    output              lcd_sda,        // C2
+    output              lcd_res,        // Y2
+    output              lcd_dc,         // L1
+    output              lcd_cs,         // P2
+    output              lcd_blk         // B3
+);
+
+// ---------------------- 内部信号 ----------------------
+wire        spi_start;
+wire [7:0]  spi_tx_data;
+wire        spi_busy;
+
+wire        lcd_init_done;
+wire [15:0] pixel_color;
+wire [8:0]  pixel_x;
+wire [9:0]  pixel_y;
+
+// SPI 主机模块
+spi_master #(
+    .SPI_CNT_MAX(4)  // 50M / (4*2) = 6.25MHz SPI
+) u_spi_master (
+    .clk(clk_50m),
+    .rst_n(sys_rst_n),
+
+    .start(spi_start),
+    .tx_data(spi_tx_data),
+    .busy(spi_busy),
+
+    .sclk(lcd_sclk),
+    .sda(lcd_sda)
+);
+
+// ST7789 初始化 + 显存写控制
+st7789_controller u_st7789_controller(
+    .clk(clk_50m),
+    .rst_n(sys_rst_n),
+
+    .spi_busy(spi_busy),
+    .spi_start(spi_start),
+    .spi_tx_data(spi_tx_data),
+
+    .lcd_res(lcd_res),
+    .lcd_dc(lcd_dc),
+    .lcd_cs(lcd_cs),
+
+    .init_done(lcd_init_done),
+    .pixel_x(pixel_x),
+    .pixel_y(pixel_y),
+    .pixel_color(pixel_color)
+);
+
+// 渐变颜色生成：240x320，垂直Y轴红‑黄‑蓝渐变
+gradient_gen u_gradient_gen(
+    .pixel_x(pixel_x),
+    .pixel_y(pixel_y),
+    .pixel_color(pixel_color)
+);
+
+assign lcd_blk = 1'b1; // 背光常开；硬件接3.3V也可以注释掉
+
+endmodule

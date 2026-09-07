@@ -1,0 +1,142 @@
+module st7789_controller(
+    input               clk,
+    input               rst_n,
+
+    input               spi_busy,
+    output reg          spi_start,
+    output reg [7:0]    spi_tx_data,
+
+    output reg          lcd_res,
+    output reg          lcd_dc,
+    output reg          lcd_cs,
+
+    output reg          init_done,
+    output reg [8:0]    pixel_x,
+    output reg [9:0]    pixel_y,
+    input      [15:0]   pixel_color
+);
+
+reg [11:0] cmd_idx;
+reg [15:0] delay_cnt;
+
+reg [8:0] x;
+reg [9:0] y;
+
+localparam ST_RST        = 4'd0;
+localparam ST_INIT_SEQ   = 4'd1;
+localparam ST_WAIT_DELAY = 4'd2;
+localparam ST_SET_WINDOW = 4'd3;
+localparam ST_WRITE_GRAM = 4'd4;
+reg [3:0] state;
+
+// ================= ST7789 初始化序列 {数据, dc位, 延时标志} =================
+reg [8:0] init_table [0:31];
+initial begin
+    init_table[0]  = {8'h01,1'b0,1'b1}; // SWRESET, wait 150ms
+    init_table[1]  = {8'h11,1'b0,1'b1}; // SLPOUT, wait 50ms
+    init_table[2]  = {8'h3A,1'b0,1'b0}; // COLMOD
+    init_table[3]  = {8'h55,1'b1,1'b0}; // 16bit RGB565
+    init_table[4]  = {8'h21,1'b0,1'b0}; // INVON
+    init_table[5]  = {8'h36,1'b0,1'b0}; // MADCTL
+    init_table[6]  = {8'h00,1'b1,1'b0}; // 屏幕方向，根据实际可修改0x00/0x60
+    init_table[7]  = {8'h29,1'b0,1'b1}; // DISPON wait 100ms
+    init_table[8]  = {9'h1FF,1'b0};     // table end marker
+end
+
+reg [8:0] curr_cmd;
+
+always @(posedge clk or negedge rst_n) begin
+    if(!rst_n) begin
+        lcd_res <= 1'b1;
+        lcd_cs  <= 1'b1;
+        lcd_dc  <= 1'b0;
+        spi_start <= 1'b0;
+        spi_tx_data <= 8'd0;
+        state <= ST_RST;
+        cmd_idx <= 0;
+        delay_cnt <= 0;
+        init_done <= 1'b0;
+        x <= 0;
+        y <= 0;
+        pixel_x <= 0;
+        pixel_y <= 0;
+    end else begin
+        spi_start <= 1'b0;
+        case(state)
+        ST_RST: begin
+            lcd_res <= 1'b0;
+            lcd_cs  <= 1'b0;
+            delay_cnt <= delay_cnt + 1'b1;
+            if(delay_cnt >= 16'd50000) begin
+                delay_cnt <= 0;
+                lcd_res <= 1'b1;
+                state <= ST_WAIT_DELAY;
+            end
+        end
+        ST_WAIT_DELAY: begin
+            delay_cnt <= delay_cnt + 1'b1;
+            if(delay_cnt >= 16'd25000) begin
+                delay_cnt <= 0;
+                state <= ST_INIT_SEQ;
+            end
+        end
+        ST_INIT_SEQ: begin
+            curr_cmd = init_table[cmd_idx];
+            if(curr_cmd[8]==1'b1) begin
+                // init table end
+                state <= ST_SET_WINDOW;
+            end else begin
+                if(!spi_busy) begin
+                    lcd_cs <= 1'b0;
+                    lcd_dc <= curr_cmd[8];
+                    spi_tx_data <= curr_cmd[7:0];
+                    spi_start <= 1'b1;
+                    cmd_idx <= cmd_idx + 1'b1;
+                    if(curr_cmd[0]) begin
+                        state <= ST_WAIT_DELAY;
+                    end
+                end
+            end
+        end
+        ST_SET_WINDOW: begin
+            // CASET x 0~239
+            if(!spi_busy) begin lcd_cs<=0; lcd_dc<=0; spi_tx_data<=8'h2A; spi_start<=1; end
+            else if(!spi_busy) begin lcd_dc<=1; spi_tx_data<=8'h00; spi_start<=1; end
+            else if(!spi_busy) begin lcd_dc<=1; spi_tx_data<=8'h00; spi_start<=1; end
+            else if(!spi_busy) begin lcd_dc<=1; spi_tx_data<=8'h00; spi_start<=1; end
+            else if(!spi_busy) begin lcd_dc<=1; spi_tx_data<=8'hEF; spi_start<=1; end
+            // RASET y 0~319
+            else if(!spi_busy) begin lcd_dc<=0; spi_tx_data<=8'h2B; spi_start<=1; end
+            else if(!spi_busy) begin lcd_dc<=1; spi_tx_data<=8'h00; spi_start<=1; end
+            else if(!spi_busy) begin lcd_dc<=1; spi_tx_data<=8'h00; spi_start<=1; end
+            else if(!spi_busy) begin lcd_dc<=1; spi_tx_data<=8'h01; spi_start<=1; end
+            else if(!spi_busy) begin lcd_dc<=1; spi_tx_data<=8'h3F; spi_start<=1; end
+            // RAMWR
+            else if(!spi_busy) begin lcd_dc<=0; spi_tx_data<=8'h2C; spi_start<=1; init_done<=1'b1; state<=ST_WRITE_GRAM; end
+        end
+        ST_WRITE_GRAM: begin
+            pixel_x <= x;
+            pixel_y <= y;
+            lcd_cs <= 1'b0;
+            lcd_dc <= 1'b1;
+            if(!spi_busy) begin
+                spi_tx_data <= pixel_color[15:8];
+                spi_start <= 1'b1;
+            end else if(!spi_busy) begin
+                spi_tx_data <= pixel_color[7:0];
+                spi_start <= 1'b1;
+                x <= x + 1'b1;
+                if(x == 9'd239) begin
+                    x <= 9'd0;
+                    y <= y + 1'b1;
+                    if(y == 10'd319) begin
+                        y <= 10'd0;
+                    end
+                end
+            end
+        end
+        endcase
+    end
+end
+
+endmodule

@@ -1,0 +1,23 @@
+module gradient_gen(
+    input      [8:0]    pixel_x,
+    input      [9:0]    pixel_y,
+    output reg [15:0]   pixel_color
+);
+
+wire [9:0] y_norm;
+assign y_norm = pixel_y;
+
+always @(*) begin
+    if(y_norm < 10'd107) begin
+        // Red → Yellow：R满，G从0→满
+        pixel_color = {5'd31, y_norm[8:4], 5'd0};
+    end else if(y_norm < 10'd214) begin
+        // Yellow → Blue：R递减，G递减，B递增
+        pixel_color = {5'd31-(y_norm-10'd107)[8:4],5'd31-(y_norm-10'd107)[8:4],(y_norm-10'd107)[8:4]};
+    end else begin
+        // pure Blue
+        pixel_color = {5'd0,6'd0,5'd31};
+    end
+end
+
+endmodule

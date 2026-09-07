@@ -1,0 +1,9 @@
+Synthesis Status : Successful - Sun Sep  6 00:44:48 2026
+Revision Name : top_lcd_st7789
+Top-level Entity Name : top_lcd_st7789
+Family : Agilex 5
+Quartus Prime Version : 25.1.1 Build 125 07/31/2025 Patches 1.03 SC Pro Edition
+Device : A5EB013BB23BE4SR1
+Logic utilization estimate (in ALMs) : 146 / 46,800 ( < 1 % )
+Total dedicated logic registers : 110
+Estimated DSP Blocks Post-Merging : 0

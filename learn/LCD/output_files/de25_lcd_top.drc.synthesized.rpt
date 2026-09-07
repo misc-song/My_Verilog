@@ -1,0 +1,268 @@
+Design Assistant report for de25_lcd_top
+Sat Sep  5 14:24:29 2026
+Quartus Prime Version 25.1.1 Build 125 07/31/2025 Patches 1.03 SC Pro Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Design Assistant (Synthesized) Results - 1 of 13 Rules Failed
+  3. RES-30134 - Registers Not Reachable from Reset Release IP
+  4. LNT-30011 - Design Contains Combinational Loops
+  5. LNT-30017 - Register Output Driving Its Own Asynchronous Control Signal Directly or Through Combinational Logic
+  6. LNT-30023 - Reset Nets with Polarity Conflict
+  7. RES-30132 - Registers May Not Be Properly Reset
+  8. RES-30133 - Embedded Memory Blocks with Initialized Content That Might be Modified Before the FPGA Enters User Mode
+  9. TMC-20052 - Paths with Post Synthesis Inferred Latches
+ 10. FLP-10500 - Non Driving Top Level Inputs Found
+ 11. LNT-30010 - Nets Driving both Reset and Clock Enable Signals
+ 12. LNT-50006 - DSP Control Signal Registers Reset Mode Mismatch
+ 13. TMC-20053 - DSP Inputs Driven by High Fan-Out Net
+ 14. TMC-20500 - Hierarchical Tree Duplication was Shallower than Possible
+ 15. TMC-20501 - Hierarchical Tree Duplication was Shallower than Requested
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2025  Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus Prime License Agreement,
+the Altera IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Altera and sold by Altera or its authorized distributors.  Please
+refer to the Altera Software License Subscription Agreements 
+on the Quartus Prime software download page.
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Design Assistant (Synthesized) Results - 1 of 13 Rules Failed                                                                                                                          ;
++---------------------------------------------------------------------------------------------------------------------+----------+------------+--------+---------------------------------+
+; Rule                                                                                                                ; Severity ; Violations ; Waived ; Tags                            ;
++---------------------------------------------------------------------------------------------------------------------+----------+------------+--------+---------------------------------+
+; RES-30134 - Registers Not Reachable from Reset Release IP                                                           ; Medium   ; 72         ; 0      ; reset-usage, reset-reachability ;
+; LNT-30011 - Design Contains Combinational Loops                                                                     ; High     ; 0          ; 0      ; nonstandard-timing              ;
+; LNT-30017 - Register Output Driving Its Own Asynchronous Control Signal Directly or Through Combinational Logic     ; Medium   ; 0          ; 0      ; nonstandard-timing              ;
+; LNT-30023 - Reset Nets with Polarity Conflict                                                                       ; Medium   ; 0          ; 0      ; reset-usage                     ;
+; RES-30132 - Registers May Not Be Properly Reset                                                                     ; Medium   ; 0          ; 0      ; reset-usage, reset-reachability ;
+; RES-30133 - Embedded Memory Blocks with Initialized Content That Might be Modified Before the FPGA Enters User Mode ; Medium   ; 0          ; 0      ; ram, reset-usage                ;
+; TMC-20052 - Paths with Post Synthesis Inferred Latches                                                              ; Medium   ; 0          ; 0      ; nonstandard-timing, latch       ;
+; FLP-10500 - Non Driving Top Level Inputs Found                                                                      ; Low      ; 0          ; 0      ; system                          ;
+; LNT-30010 - Nets Driving both Reset and Clock Enable Signals                                                        ; Low      ; 0          ; 0      ; reset-usage                     ;
+; LNT-50006 - DSP Control Signal Registers Reset Mode Mismatch                                                        ; Low      ; 0          ; 0      ; dsp, reset-usage                ;
+; TMC-20053 - DSP Inputs Driven by High Fan-Out Net                                                                   ; Low      ; 0          ; 0      ; dsp                             ;
+; TMC-20500 - Hierarchical Tree Duplication was Shallower than Possible                                               ; Low      ; 0          ; 0      ; register-duplication, synthesis ;
+; TMC-20501 - Hierarchical Tree Duplication was Shallower than Requested                                              ; Low      ; 0          ; 0      ; register-duplication, synthesis ;
++---------------------------------------------------------------------------------------------------------------------+----------+------------+--------+---------------------------------+
+
+
+Status:		FAIL
+Severity:		Medium
+Number of violations: 	72
+Rule Parameters:      	max_violations = 5000
++-----------------------------------------------------------+
+; RES-30134 - Registers Not Reachable from Reset Release IP ;
++--------------------------------+--------------------------+
+; Register Node                  ; Waived                   ;
++--------------------------------+--------------------------+
+; u_st7789_driver|delay_cnt[31]  ;                          ;
+; u_st7789_driver|delay_cnt[18]  ;                          ;
+; u_st7789_driver|delay_cnt[15]  ;                          ;
+; u_st7789_driver|delay_cnt[16]  ;                          ;
+; u_st7789_driver|delay_cnt[17]  ;                          ;
+; u_st7789_driver|delay_cnt[14]  ;                          ;
+; u_st7789_driver|delay_cnt[13]  ;                          ;
+; u_st7789_driver|delay_cnt[12]  ;                          ;
+; u_st7789_driver|delay_cnt[10]  ;                          ;
+; u_st7789_driver|delay_cnt[11]  ;                          ;
+; u_st7789_driver|delay_cnt[8]   ;                          ;
+; u_st7789_driver|delay_cnt[28]  ;                          ;
+; u_st7789_driver|delay_cnt[7]   ;                          ;
+; u_st7789_driver|delay_cnt[6]   ;                          ;
+; u_st7789_driver|delay_cnt[0]   ;                          ;
+; u_st7789_driver|delay_cnt[1]   ;                          ;
+; u_st7789_driver|delay_cnt[2]   ;                          ;
+; u_st7789_driver|delay_cnt[3]   ;                          ;
+; u_st7789_driver|delay_cnt[4]   ;                          ;
+; u_st7789_driver|spi_bit_cnt[2] ;                          ;
+; u_st7789_driver|spi_bit_cnt[1] ;                          ;
+; u_st7789_driver|spi_bit_cnt[0] ;                          ;
+; u_st7789_driver|delay_cnt[29]  ;                          ;
+; u_st7789_driver|spi_bit_cnt[3] ;                          ;
+; u_st7789_driver|cmd_idx[2]     ;                          ;
+; u_st7789_driver|cmd_idx[1]     ;                          ;
+; u_st7789_driver|cmd_idx[0]     ;                          ;
+; u_st7789_driver|state          ;                          ;
+; u_st7789_driver|spi_busy       ;                          ;
+; u_st7789_driver|cmd_idx[3]     ;                          ;
+; u_st7789_driver|cmd_idx[4]     ;                          ;
+; u_st7789_driver|delay_cnt[5]   ;                          ;
+; u_st7789_driver|delay_cnt[9]   ;                          ;
+; u_st7789_driver|delay_cnt[30]  ;                          ;
+; u_st7789_driver|delay_cnt[23]  ;                          ;
+; u_st7789_driver|delay_cnt[24]  ;                          ;
+; u_st7789_driver|delay_cnt[26]  ;                          ;
+; u_st7789_driver|delay_cnt[27]  ;                          ;
+; timer_cnt[24]                  ;                          ;
+; timer_cnt[0]                   ;                          ;
+; timer_cnt[1]                   ;                          ;
+; timer_cnt[2]                   ;                          ;
+; timer_cnt[3]                   ;                          ;
+; timer_cnt[4]                   ;                          ;
+; u_st7789_driver|delay_cnt[25]  ;                          ;
+; timer_cnt[5]                   ;                          ;
+; timer_cnt[6]                   ;                          ;
+; timer_cnt[7]                   ;                          ;
+; timer_cnt[8]                   ;                          ;
+; timer_cnt[9]                   ;                          ;
+; timer_cnt[10]                  ;                          ;
+; timer_cnt[11]                  ;                          ;
+; timer_cnt[12]                  ;                          ;
+; timer_cnt[13]                  ;                          ;
+; timer_cnt[14]                  ;                          ;
+; u_st7789_driver|delay_cnt[22]  ;                          ;
+; timer_cnt[15]                  ;                          ;
+; timer_cnt[16]                  ;                          ;
+; timer_cnt[17]                  ;                          ;
+; timer_cnt[18]                  ;                          ;
+; timer_cnt[19]                  ;                          ;
+; timer_cnt[20]                  ;                          ;
+; timer_cnt[21]                  ;                          ;
+; timer_cnt[22]                  ;                          ;
+; timer_cnt[23]                  ;                          ;
+; color_sel[0]                   ;                          ;
+; u_st7789_driver|delay_cnt[21]  ;                          ;
+; color_sel[1]                   ;                          ;
+; u_st7789_driver|spi_tx_data[8] ;                          ;
+; u_st7789_driver|lcd_rst        ;                          ;
+; u_st7789_driver|delay_cnt[20]  ;                          ;
+; u_st7789_driver|delay_cnt[19]  ;                          ;
++--------------------------------+--------------------------+
+
+
+Status:		PASS
+Severity:		High
+Number of violations: 	0
+Rule Parameters:      	max_violations = 5000
++-------------------------------------------------+
+; LNT-30011 - Design Contains Combinational Loops ;
++-------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Medium
+Number of violations: 	0
+Rule Parameters:      	max_violations = 5000
++-----------------------------------------------------------------------------------------------------------------+
+; LNT-30017 - Register Output Driving Its Own Asynchronous Control Signal Directly or Through Combinational Logic ;
++-----------------------------------------------------------------------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Medium
+Number of violations: 	0
+Rule Parameters:      	max_violations = 5000
++-----------------------------------------------+
+; LNT-30023 - Reset Nets with Polarity Conflict ;
++-----------------------------------------------+
+
+
+Status:		PASS
+Severity:		Medium
+Number of violations: 	0
+Rule Parameters:      	max_violations = 5000
++-------------------------------------------------+
+; RES-30132 - Registers May Not Be Properly Reset ;
++-------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Medium
+Number of violations: 	0
+Rule Parameters:      	
+		max_violations = 5000
+		exclude_ram_blocks_without_mif = True
++---------------------------------------------------------------------------------------------------------------------+
+; RES-30133 - Embedded Memory Blocks with Initialized Content That Might be Modified Before the FPGA Enters User Mode ;
++---------------------------------------------------------------------------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Medium
+Number of violations: 	0
+Rule Parameters:      	max_violations = 5000
++--------------------------------------------------------+
+; TMC-20052 - Paths with Post Synthesis Inferred Latches ;
++--------------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Low
+Number of violations: 	0
+Rule Parameters:      	max_violations = 5000
++------------------------------------------------+
+; FLP-10500 - Non Driving Top Level Inputs Found ;
++------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Low
+Number of violations: 	0
+Rule Parameters:      	max_violations = 5000
++--------------------------------------------------------------+
+; LNT-30010 - Nets Driving both Reset and Clock Enable Signals ;
++--------------------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Low
+Number of violations: 	0
+Rule Parameters:      	
+		max_violations = 5000
+		DSP_Chain_Threshold = 2
+		DSP_Check_User_WYSIWYGs = True
++--------------------------------------------------------------+
+; LNT-50006 - DSP Control Signal Registers Reset Mode Mismatch ;
++--------------------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Low
+Number of violations: 	0
+Rule Parameters:      	
+		max_violations = 5000
+		DSP_High_Fanout_Net_Threshold = 500
+		DSP_Chain_Threshold = 2
+		DSP_Check_User_WYSIWYGs = True
++---------------------------------------------------+
+; TMC-20053 - DSP Inputs Driven by High Fan-Out Net ;
++---------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Low
+Number of violations: 	0
+Rule Parameters:      	max_violations = 5000
++-----------------------------------------------------------------------+
+; TMC-20500 - Hierarchical Tree Duplication was Shallower than Possible ;
++-----------------------------------------------------------------------+
+
+
+Status:		PASS
+Severity:		Low
+Number of violations: 	0
+Rule Parameters:      	max_violations = 5000
++------------------------------------------------------------------------+
+; TMC-20501 - Hierarchical Tree Duplication was Shallower than Requested ;
++------------------------------------------------------------------------+
+
+

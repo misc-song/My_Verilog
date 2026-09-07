@@ -1,0 +1,26 @@
+
+State Machine - Summary
+
+State Machine - return_state
+Name return_state.S_SPI_WAIT return_state.S_POR_DELAY return_state.S_FILL return_state.S_WINDOW return_state.S_INIT return_state.S_RES_HIGH return_state.S_RES_LOW return_state.S_DONE return_state.S_DELAY_WAIT 
+return_state.S_DONE 0 0 0 0 0 0 0 0 0 
+return_state.S_RES_LOW 0 0 0 0 0 0 1 1 0 
+return_state.S_RES_HIGH 0 0 0 0 0 1 0 1 0 
+return_state.S_INIT 0 0 0 0 1 0 0 1 0 
+return_state.S_WINDOW 0 0 0 1 0 0 0 1 0 
+return_state.S_FILL 0 0 1 0 0 0 0 1 0 
+return_state.S_POR_DELAY 0 1 0 0 0 0 0 1 0 
+return_state.S_DELAY_WAIT 0 0 0 0 0 0 0 1 1 
+return_state.S_SPI_WAIT 1 0 0 0 0 0 0 1 0 
+
+State Machine - state
+Name state.S_SPI_WAIT state.S_FILL state.S_WINDOW state.S_INIT state.S_RES_HIGH state.S_RES_LOW state.S_DONE state.S_POR_DELAY state.S_DELAY_WAIT 
+state.S_POR_DELAY 0 0 0 0 0 0 0 0 0 
+state.S_DONE 0 0 0 0 0 0 1 1 0 
+state.S_RES_LOW 0 0 0 0 0 1 0 1 0 
+state.S_RES_HIGH 0 0 0 0 1 0 0 1 0 
+state.S_INIT 0 0 0 1 0 0 0 1 0 
+state.S_WINDOW 0 0 1 0 0 0 0 1 0 
+state.S_FILL 0 1 0 0 0 0 0 1 0 
+state.S_DELAY_WAIT 0 0 0 0 0 0 0 1 1 
+state.S_SPI_WAIT 1 0 0 0 0 0 0 1 0 

@@ -1,0 +1,134 @@
+module st7789_driver(
+    input               clk,
+    input               rst_n,
+    input      [15:0]   fill_color,
+
+    output reg          lcd_sck,
+    output reg          lcd_sda,
+    output reg          lcd_dc,
+    output reg          lcd_rst,
+    output reg          lcd_cs
+);
+
+localparam CLK_FREQ = 50_000_000;
+localparam DELAY_1MS = CLK_FREQ / 1000;
+
+reg [31:0] delay_cnt;
+reg [7:0]  cmd_idx;
+reg [15:0] pixel_cnt; //240*320 =76800像素
+reg [8:0]  spi_tx_data; //bit8:DC, bit7~0:data
+
+reg state;
+localparam S_INIT  = 1'b0;
+localparam S_FILL  = 1'b1;
+
+//ST7789初始化命令表 {DC,8bit命令/数据}
+reg [8:0] init_cmd [0:23];
+initial begin
+    init_cmd[0]  = {1'b0,8'h01}; //软件复位
+    init_cmd[1]  = {1'b1,8'h00}; //delay
+    init_cmd[2]  = {1'b0,8'h11}; //退出睡眠
+    init_cmd[3]  = {1'b1,8'h0A}; //delay 10ms
+    init_cmd[4]  = {1'b0,8'h3A}; //像素格式
+    init_cmd[5]  = {1'b0,8'h55}; //RGB565
+    init_cmd[6]  = {1'b0,8'h36}; //内存访问
+    init_cmd[7]  = {1'b0,8'h00}; //扫描方向
+    init_cmd[8]  = {1'b0,8'h21}; //显示反转开启
+    init_cmd[9]  = {1'b0,8'h2A}; //列地址
+    init_cmd[10] = {1'b0,8'h00};
+    init_cmd[11] = {1'b0,8'h00};
+    init_cmd[12] = {1'b0,8'h00};
+    init_cmd[13] = {1'b0,8'hEF}; //239
+    init_cmd[14] = {1'b0,8'h2B}; //行地址
+    init_cmd[15] = {1'b0,8'h00};
+    init_cmd[16] = {1'b0,8'h00};
+    init_cmd[17] = {1'b0,8'h01};
+    init_cmd[18] = {1'b0,8'h3F}; //319
+    init_cmd[19] = {1'b0,8'h29}; //开显示
+    init_cmd[20] = {1'b1,8'h14}; //delay 20ms
+    init_cmd[21] = {1'b0,8'h2C}; //写内存开始
+    init_cmd[22] = {1'b1,8'h00}; //end marker
+    init_cmd[23] = {1'b1,8'h00};
+end
+
+reg [3:0] spi_bit_cnt;
+reg spi_busy;
+
+always @(posedge clk or negedge rst_n) begin
+    if(!rst_n) begin
+        lcd_rst <= 1'b0;
+        lcd_cs  <= 1'b1;
+        lcd_dc  <= 1'b0;
+        lcd_sck <= 1'b0;
+        lcd_sda <= 1'b0;
+        state      <= S_INIT;
+        cmd_idx    <= 8'd0;
+        delay_cnt  <= 32'd0;
+        pixel_cnt  <= 16'd0;
+        spi_busy   <= 1'b0;
+        spi_bit_cnt<= 4'd0;
+        spi_tx_data<= 9'd0;
+    end else begin
+        lcd_cs <= 1'b0; //一直拉低片选
+
+        if(delay_cnt != 0) begin
+            delay_cnt <= delay_cnt - 1'b1;
+        end else if(!spi_busy) begin
+            case(state)
+                S_INIT: begin
+                    spi_tx_data <= init_cmd[cmd_idx];
+                    if(init_cmd[cmd_idx][8]==1'b1 && init_cmd[cmd_idx][7:0]!=8'h00) begin
+                        //延时指令
+                        delay_cnt <= DELAY_1MS * init_cmd[cmd_idx][7:0];
+                        cmd_idx <= cmd_idx +1'b1;
+                    end else if(init_cmd[cmd_idx][8]==1'b0) begin
+                        spi_busy <= 1'b1; //发送SPI字节
+                        cmd_idx <= cmd_idx +1'b1;
+                    end else begin
+                        //初始化完成，进入刷屏
+                        state <= S_FILL;
+                        pixel_cnt <= 16'd0;
+                    end
+                end
+
+                S_FILL: begin
+                    spi_tx_data <= {1'b1, fill_color[15:8]}; //高字节
+                    spi_busy <=1'b1;
+                end
+            endcase
+        end else begin
+            //SPI 9bit移位发送：DC bit + 8bit data，下降沿输出
+            if(spi_bit_cnt < 4'd9) begin
+                lcd_sck <= 1'b0;
+                lcd_dc  <= spi_tx_data[8];
+                lcd_sda <= spi_tx_data[7 - spi_bit_cnt[2:0]];
+                spi_bit_cnt <= spi_bit_cnt + 1'b1;
+            end else begin
+                lcd_sck <= 1'b1;
+                spi_bit_cnt <= 4'd0;
+                spi_busy <= 1'b0;
+
+                if(state == S_FILL) begin
+                    if(pixel_cnt[0]==1'b0) begin
+                        //刚发完高字节，紧接着发低字节
+                        spi_tx_data <= {1'b1, fill_color[7:0]};
+                        spi_busy <=1'b1;
+                    end else begin
+                        pixel_cnt <= pixel_cnt + 1'b1;
+                    end
+                end
+            end
+        end
+    end
+end
+
+//上电硬件复位
+always @(posedge clk or negedge rst_n) begin
+    if(!rst_n) begin
+        lcd_rst <= 1'b0;
+    end else begin
+        if(delay_cnt > DELAY_1MS*2) lcd_rst <= 1'b1;
+    end
+end
+
+endmodule

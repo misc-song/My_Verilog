@@ -1,0 +1,14 @@
+
+State Machine - Summary
+
+State Machine - state
+Name state.S_FILL_XF state.S_FILL state.S_INIT_XF state.S_WAIT state.S_INIT state.S_RST_H state.S_RST_L state.S_IDLE state.S_DONE 
+state.S_IDLE 0 0 0 0 0 0 0 0 0 
+state.S_RST_L 0 0 0 0 0 0 1 1 0 
+state.S_RST_H 0 0 0 0 0 1 0 1 0 
+state.S_INIT 0 0 0 0 1 0 0 1 0 
+state.S_WAIT 0 0 0 1 0 0 0 1 0 
+state.S_INIT_XF 0 0 1 0 0 0 0 1 0 
+state.S_FILL 0 1 0 0 0 0 0 1 0 
+state.S_DONE 0 0 0 0 0 0 0 1 1 
+state.S_FILL_XF 1 0 0 0 0 0 0 1 0 

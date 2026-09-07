@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<internal_error>
+	<sub_system>ERR</sub_system>
+	<callstack>	0x7ffab572f8c6: edt_tedq + 0x3f8c6 (?get_find_dialog_options@TEDQ_SCINTILLA_CTRL@@AEAAX_N@Z + 0x46)
+	0x7ffab573bd59: edt_tedq + 0x4bd59 (?highlight_visible_text@TEDQ_SCINTILLA_CTRL@@IEAAXXZ + 0x29)
+	0x7ffab56ff789: edt_tedq + 0xf789 (?qt_static_metacall@TEDQ_SCINTILLA_CTRL@@CAXPEAVQObject@@W4Call@QMetaObject@@HPEAPEAX@Z + 0x1b59)
+	0x7ffb39c2cff6: Qt6Core + 0xacff6 (?qt_static_metacall@QObject@@CAXPEAV1@W4Call@QMetaObject@@HPEAPEAX@Z + 0x17c6)
+	0x7ffb39c2f6b3: Qt6Core + 0xaf6b3 (?activate@QMetaObject@@SAXPEAVQObject@@PEBU1@HPEAPEAX@Z + 0x83)
+	0x7ffb39c46ebb: Qt6Core + 0xc6ebb (?timerEvent@QTimer@@MEAAXPEAVQTimerEvent@@@Z + 0x7b)
+	0x7ffb39c354a5: Qt6Core + 0xb54a5 (?event@QObject@@UEAA_NPEAVQEvent@@@Z + 0x65)
+	0x7ffb3a820c9d: Qt6Widgets + 0x10c9d (?notify_helper@QApplicationPrivate@@QEAA_NPEAVQObject@@PEAVQEvent@@@Z + 0x10d)
+	0x7ffb3a81feb9: Qt6Widgets + 0xfeb9 (?notify@QApplication@@UEAA_NPEAVQObject@@PEAVQEvent@@@Z + 0x1759)
+	0x7ffb39bf5074: Qt6Core + 0x75074 (?notifyInternal2@QCoreApplication@@CA_NPEAVQObject@@PEAVQEvent@@@Z + 0xc4)
+	0x7ffb39d4fed7: Qt6Core + 0x1cfed7 (?sendTimerEvent@QEventDispatcherWin32Private@@QEAAXH@Z + 0x57)
+	0x7ffb39d4f06d: Qt6Core + 0x1cf06d (?processEvents@QEventDispatcherWin32@@UEAA_NV?$QFlags@W4ProcessEventsFlag@QEventLoop@@@@@Z + 0xb1d)
+	0x7ffb972152c5: USER32 + 0x152c5 (CallWindowProcW + 0x6a5)
+	0x7ffb97215d9c: USER32 + 0x15d9c (IsWindowUnicode + 0x20c)
+	0x7ffb39d4ea1b: Qt6Core + 0x1cea1b (?processEvents@QEventDispatcherWin32@@UEAA_NV?$QFlags@W4ProcessEventsFlag@QEventLoop@@@@@Z + 0x4cb)
+	0x7ffb3693b928: Qt6Gui + 0x2eb928 (?processEvents@QWindowsGuiEventDispatcher@@UEAA_NV?$QFlags@W4ProcessEventsFlag@QEventLoop@@@@@Z + 0x18)
+	0x7ffb39bfa543: Qt6Core + 0x7a543 (?exec@QEventLoop@@QEAAHV?$QFlags@W4ProcessEventsFlag@QEventLoop@@@@@Z + 0x1c3)
+	0x7ffb39bf314c: Qt6Core + 0x7314c (?exec@QCoreApplication@@SAHXZ + 0x15c)
+	0x7ff6907f2c37: quartus + 0x2c37 (?qgq_py_wrap_main@@YAHHPEAPEBD@Z + 0x87)
+	0x7ffb79a286e8: ccl_msg + 0x286e8 (?msg_main_thread@@YAPEAXPEAX@Z + 0x18)
+	0x7ffb79a298f2: ccl_msg + 0x298f2 (?msg_thread_wrapper@@YAPEAXP6APEAXPEAX@Z0@Z + 0x82)
+	0x7ffb79bab063: ccl_mem + 0x2b063 (?mem_thread_wrapper@@YAPEAXP6APEAXPEAX@Z0@Z + 0x73)
+	0x7ffb79a265bf: ccl_msg + 0x265bf (?msg_exe_main@@YAHHPEAPEBDP6AHH0@Z@Z + 0x17f)
+	0x7ff6907f434f: quartus + 0x434f (qtEntryPoint + 0x2f)
+	0x7ff6907f3981: quartus + 0x3981 (__scrt_common_main_seh + 0x105)
+	0x7ffb97afccb6: KERNEL32 + 0x2ccb6 (BaseThreadInitThunk + 0x16)
+	0x7ffb98becaeb: ntdll + 0xacaeb (RtlUserThreadStart + 0x2b)
+</callstack>
+	<error>*** Fatal Error: Access Violation at 00007FFAB572F8C7</error>
+	<date>Sat Sep  5 19:14:56 2026
+</date>
+	<version>Version 25.1.1 Build 125 07/31/2025 Patches 1.03 SC Pro Edition</version>
+</internal_error>

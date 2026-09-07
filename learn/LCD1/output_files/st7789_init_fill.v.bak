@@ -1,0 +1,149 @@
+module st7789_init_fill(
+    input               clk_50m,
+    input               rst_n,
+    output reg          init_done,
+
+    input               spi_busy,
+    output reg          spi_start,
+    output reg [7:0]    spi_tx_data,
+    output reg          lcd_dc      // 0=命令，1=数据
+);
+
+localparam  IDLE        = 4'd0;
+localparam  RST_WAIT    = 4'd1;
+localparam  SEND_CMD    = 4'd2;
+localparam  WAIT_SPI    = 4'd3;
+localparam  SET_WINDOW  = 4'd4;
+localparam  WRITE_PIX   = 4'd5;
+localparam  DONE        = 4'd6;
+
+reg [3:0]   state;
+reg [15:0]  cnt_delay;
+reg [7:0]   cmd_idx;
+
+// ST7789 4‑wire SPI初始化序列 (cmd, dc=0; data dc=1)
+reg [8:0] init_table[0:23];
+initial begin
+//{dc, data_byte}
+init_table[0]  = {1'b0, 8'h01}; // Software Reset
+init_table[1]  = {1'b1, 8'h00}; // dummy
+init_table[2]  = {1'b0, 8'h11}; // Sleep Out
+init_table[3]  = {1'b0, 8'h3A}; // COLMOD: Pixel Format
+init_table[4]  = {1'b1, 8'h55}; // 16bit RGB565
+init_table[5]  = {1'b0, 8'h21}; // Inversion ON
+init_table[6]  = {1'b0, 8'h26}; // Gamma set
+init_table[7]  = {1'b1, 8'h04};
+init_table[8]  = {1'b0, 8'hB2}; // Porch setting
+init_table[9]  = {1'b1, 8'h0C};
+init_table[10] = {1'b1, 8'h0C};
+init_table[11] = {1'b1, 8'h00};
+init_table[12] = {1'b1, 8'h33};
+init_table[13] = {1'b1, 8'h33};
+init_table[14] = {1'b0, 8'hB7}; // Gate control
+init_table[15] = {1'b1, 8'h35};
+init_table[16] = {1'b0, 8'hBB}; // VCOM
+init_table[17] = {1'b1, 8'h19};
+init_table[18] = {1'b0, 8'hC0}; // LCM Control
+init_table[19] = {1'b1, 8'h2C};
+init_table[20] = {1'b0, 8'hC2}; // VDV
+init_table[21] = {1'b1, 8'h01};
+init_table[22] = {1'b0, 8'h29}; // Display ON
+init_table[23] = {1'b1, 8'h00};
+end
+
+reg [18:0] pixel_cnt; // 240*320 = 76800 pixels
+
+always @(posedge clk_50m or negedge rst_n) begin
+if(!rst_n) begin
+    state       <= IDLE;
+    cnt_delay   <= 16'd0;
+    cmd_idx     <= 8'd0;
+    spi_start   <= 1'b0;
+    spi_tx_data <= 8'd0;
+    lcd_dc      <= 1'b0;
+    init_done   <= 1'b0;
+    pixel_cnt   <= 19'd0;
+end
+else begin
+    spi_start <= 1'b0;
+    case(state)
+    IDLE: begin
+        cnt_delay <= 16'd50000; // 1ms delay for HW reset settle
+        state <= RST_WAIT;
+    end
+
+    RST_WAIT: begin
+        if(cnt_delay == 16'd0) begin
+            cmd_idx <= 8'd0;
+            state <= SEND_CMD;
+        end
+        else cnt_delay <= cnt_delay - 1'b1;
+    end
+
+    SEND_CMD: begin
+        if(cmd_idx > 8'd23) begin
+            state <= SET_WINDOW;
+        end
+        else begin
+            lcd_dc      <= init_table[cmd_idx][8];
+            spi_tx_data <= init_table[cmd_idx][7:0];
+            spi_start   <= 1'b1;
+            state       <= WAIT_SPI;
+        end
+    end
+
+    WAIT_SPI: begin
+        if(spi_busy == 1'b0) begin
+            cmd_idx <= cmd_idx + 1'b1;
+            state <= SEND_CMD;
+        end
+    end
+
+    // 设置写窗口 CASET(2Ah), RASET(2Bh), RAMWR(2Ch)
+    SET_WINDOW: begin
+        // CASET column 0~239
+        lcd_dc<=1'b0; spi_tx_data<=8'h2A; spi_start<=1'b1; state<=WAIT_SPI;
+        @(posedge clk_50m); while(spi_busy);
+        lcd_dc<=1'b1; spi_tx_data<=8'h00; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+        lcd_dc<=1'b1; spi_tx_data<=8'h00; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+        lcd_dc<=1'b1; spi_tx_data<=8'h00; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+        lcd_dc<=1'b1; spi_tx_data<=8'hEF; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+
+        // RASET row 0~319
+        lcd_dc<=1'b0; spi_tx_data<=8'h2B; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+        lcd_dc<=1'b1; spi_tx_data<=8'h00; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+        lcd_dc<=1'b1; spi_tx_data<=8'h00; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+        lcd_dc<=1'b1; spi_tx_data<=8'h01; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+        lcd_dc<=1'b1; spi_tx_data<=8'h3F; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+
+        // RAMWR 写内存命令
+        lcd_dc<=1'b0; spi_tx_data<=8'h2C; spi_start<=1'b1; @(posedge clk_50m); while(spi_busy);
+
+        pixel_cnt <= 19'd0;
+        state <= WRITE_PIX;
+    end
+
+    WRITE_PIX: begin
+        if(pixel_cnt >= 19'd76800) begin
+            state <= DONE;
+        end
+        else begin
+            // RGB565 WHITE = 16'hFFFF, 先发高字节 0xFF，再低字节0xFF
+            lcd_dc <= 1'b1;
+            spi_tx_data <= 8'hFF; spi_start <= 1'b1;
+            state <= WAIT_SPI;
+            @(posedge clk_50m); while(spi_busy);
+            spi_tx_data <= 8'hFF; spi_start <= 1'b1;
+            state <= WAIT_SPI;
+            @(posedge clk_50m); while(spi_busy);
+            pixel_cnt <= pixel_cnt + 1'b1;
+        end
+    end
+
+    DONE: begin
+        init_done <= 1'b1;
+    end
+    default: state <= IDLE;
+    endcase
+end
+endmodule

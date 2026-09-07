@@ -1,0 +1,507 @@
+Synthesis report
+Sun Sep  6 00:44:48 2026
+Quartus Prime Version 25.1.1 Build 125 07/31/2025 Patches 1.03 SC Pro Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Synthesis Summary
+  3. Synthesis Settings
+  4. Synthesis Source Files Read
+  5. Synthesis Partition Summary
+---- Analysis & Elaboration Stage Reports ----
+       6. Top Causes of Logic Optimized Away During Sweep
+---- Logic Synthesis Stage Reports ----
+       7. Partition "root_partition" Resource Utilization by Entity
+       8. State Machine - Summary
+       9. State Machine - return_state
+      10. State Machine - state
+      11. Registers Removed During Synthesis
+      12. General Register Statistics for Partition "root_partition"
+      13. Inverted Register Statistics
+      14. Multiplexer Restructuring Statistics (Restructuring Performed)
+      15. Multiplier Implementation Report
+      16. Post-Synthesis Netlist Statistics for Partition "root_partition"
+      17. Synthesis Resource Usage Summary for Partition "root_partition"
+ 18. Warnings for top_lcd_st7789.v
+ 19. General Warnings
+ 20. Synthesis INI Usage
+ 21. Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2025  Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus Prime License Agreement,
+the Altera IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Altera and sold by Altera or its authorized distributors.  Please
+refer to the Altera Software License Subscription Agreements 
+on the Quartus Prime software download page.
+
+
+
++------------------------------------------------------------------------------------------------+
+; Synthesis Summary                                                                              ;
++--------------------------------------+---------------------------------------------------------+
+; Synthesis Status                     ; Successful - Sun Sep  6 00:44:48 2026                   ;
+; Revision Name                        ; top_lcd_st7789                                          ;
+; Top-level Entity Name                ; top_lcd_st7789                                          ;
+; Family                               ; Agilex 5                                                ;
+; Quartus Prime Version                ; 25.1.1 Build 125 07/31/2025 Patches 1.03 SC Pro Edition ;
+; Device                               ; A5EB013BB23BE4SR1                                       ;
+; Logic utilization estimate (in ALMs) ; 146 / 46,800 ( < 1 % )                                  ;
+; Total dedicated logic registers      ; 110                                                     ;
+; Estimated DSP Blocks Post-Merging    ; 0                                                       ;
++--------------------------------------+---------------------------------------------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------+
+; Synthesis Settings                                                                                                                  ;
++---------------------------------------------------------------------------------+-------------------------+-------------------------+
+; Option                                                                          ; Setting                 ; Default Value           ;
++---------------------------------------------------------------------------------+-------------------------+-------------------------+
+; Device                                                                          ; A5EB013BB23BE4SR1       ;                         ;
+; Top-level entity name                                                           ; top_lcd_st7789          ; top_lcd_st7789          ;
+; Family name                                                                     ; Agilex 5                ; Cyclone 10 GX           ;
+; Enable parallel Assembler and Timing Analyzer during compilation                ; On                      ; On                      ;
+; Enable compact report table                                                     ; Off                     ; Off                     ;
+; Enable Design Assistant in the compilation flow                                 ; On                      ; On                      ;
+; Design Assistant include IP blocks                                              ; Off                     ; Off                     ;
+; High fanout net threshold for RAM inference                                     ; 15                      ; 15                      ;
+; Design Assistant limit on reported violations per rule                          ; 5000                    ; 5000                    ;
+; Optimization Mode                                                               ; Balanced                ; Balanced                ;
+; Allow Register Retiming                                                         ; On                      ; On                      ;
+; Allow RAM Retiming                                                              ; Off                     ; Off                     ;
+; Allow DSP Retiming                                                              ; Off                     ; Off                     ;
+; Restructure Multiplexers                                                        ; Auto                    ; Auto                    ;
+; Waive gated clock synchronizer check                                            ; On                      ; On                      ;
+; MLAB Add Timing Constraints For Mixed-Port Feed-Through Mode Setting Don't Care ; Off                     ; Off                     ;
+; Preserve fewer node names                                                       ; On                      ; On                      ;
+; Intel FPGA IP Evaluation Mode                                                   ; Enable                  ; Enable                  ;
+; Verilog Version                                                                 ; Verilog_2001            ; Verilog_2001            ;
+; VHDL Version                                                                    ; VHDL_1993               ; VHDL_1993               ;
+; State Machine Processing                                                        ; Auto                    ; Auto                    ;
+; Safe State Machine                                                              ; Auto                    ; Auto                    ;
+; Iteration limit for constant Verilog loops                                      ; 5000                    ; 5000                    ;
+; Iteration limit for non-constant Verilog loops                                  ; 250                     ; 250                     ;
+; Infer RAMs from Raw Logic                                                       ; On                      ; On                      ;
+; DSP Action on miss                                                              ; Ignore                  ; Ignore                  ;
+; DSP Block Balancing                                                             ; Auto                    ; Auto                    ;
+; NOT Gate Push-Back                                                              ; On                      ; On                      ;
+; Power-Up Don't Care                                                             ; On                      ; On                      ;
+; Remove Redundant Logic Cells                                                    ; Off                     ; Off                     ;
+; Remove Duplicate Registers                                                      ; On                      ; On                      ;
+; Ignore GLOBAL Buffers                                                           ; Off                     ; Off                     ;
+; Ignore LCELL Buffers                                                            ; Off                     ; Off                     ;
+; Ignore SOFT Buffers                                                             ; On                      ; On                      ;
+; Optimization Technique                                                          ; Balanced                ; Balanced                ;
+; Auto Open-Drain Pins                                                            ; On                      ; On                      ;
+; Perform WYSIWYG Primitive Resynthesis                                           ; Off                     ; Off                     ;
+; Auto ROM Replacement                                                            ; On                      ; On                      ;
+; Auto RAM Replacement                                                            ; On                      ; On                      ;
+; Auto DSP Block Replacement                                                      ; On                      ; On                      ;
+; Auto Shift Register Replacement                                                 ; Auto                    ; Auto                    ;
+; Allow Shift Register Merging across Hierarchies                                 ; Auto                    ; Auto                    ;
+; Physical Shift Register Inference                                               ; On                      ; On                      ;
+; Auto Clock Enable Replacement                                                   ; On                      ; On                      ;
+; Strict RAM Replacement                                                          ; Off                     ; Off                     ;
+; Allow Synchronous Control Signals                                               ; On                      ; On                      ;
+; Force Use of Synchronous Clear Signals                                          ; Off                     ; Off                     ;
+; Auto Resource Sharing                                                           ; Off                     ; Off                     ;
+; Allow Any RAM Size For Recognition                                              ; Off                     ; Off                     ;
+; Allow Any Shift Register Size For Recognition                                   ; Off                     ; Off                     ;
+; Ignore translate_off and synthesis_off directives                               ; Off                     ; Off                     ;
+; Report Propagation of Constraints                                               ; On                      ; On                      ;
+; Ignore Maximum Fan-Out Assignments                                              ; Off                     ; Off                     ;
+; Synchronization Register Chain Length                                           ; 3                       ; 3                       ;
+; Power Optimization During Synthesis                                             ; Normal compilation      ; Normal compilation      ;
+; HDL message level                                                               ; Level2                  ; Level2                  ;
+; Number of Protected Registers Reported in Synthesis Report                      ; 100                     ; 100                     ;
+; Number of Removed Registers Reported in Synthesis Report                        ; 5000                    ; 5000                    ;
+; Number of Optimized Away Hierarchies Reported in Synthesis Report               ; 100                     ; 100                     ;
+; Number of Top Root Causes Reported in Synthesis Report                          ; 10                      ; 10                      ;
+; Group Identical Hierarchies in Optimized Away Hierarchies Report                ; On                      ; On                      ;
+; Number of Swept Nodes Reported in Synthesis Report                              ; 5000                    ; 5000                    ;
+; Number of Inverted Registers Reported in Synthesis Report                       ; 100                     ; 100                     ;
+; Clock MUX Protection                                                            ; On                      ; On                      ;
+; Auto Gated Clock Conversion                                                     ; Off                     ; Off                     ;
+; Block Design Naming                                                             ; Auto                    ; Auto                    ;
+; SDC constraint protection                                                       ; Off                     ; Off                     ;
+; Optimization and Constraint Precedence                                          ; Prioritize Optimization ; Prioritize Optimization ;
+; Synthesis Effort                                                                ; Auto                    ; Auto                    ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal                    ; On                      ; On                      ;
+; Analysis & Synthesis Message Level                                              ; Medium                  ; Medium                  ;
+; Disable Register Merging Across Hierarchies                                     ; Auto                    ; Auto                    ;
+; Resource Aware Inference For Block RAM                                          ; On                      ; On                      ;
+; Automatic Parallel Synthesis                                                    ; On                      ; On                      ;
+; Partial Reconfiguration Bitstream ID                                            ; Off                     ; Off                     ;
+; Disable DSP Negate Inferencing                                                  ; Off                     ; Off                     ;
+; Report Parameter Settings                                                       ; On                      ; On                      ;
+; Report Parameter Settings to ASCII                                              ; On                      ; On                      ;
+; Report Source Assignments                                                       ; On                      ; On                      ;
+; Report Source Assignments to ASCII                                              ; On                      ; On                      ;
+; Report Resource Utilization by Entity to ASCII                                  ; On                      ; On                      ;
+; Size of the Latch Report                                                        ; 100                     ; 100                     ;
+; Enable VHDL static assertion support                                            ; Off                     ; Off                     ;
+; Enable SystemVerilog static assertion support                                   ; Off                     ; Off                     ;
+; Enable State Machines Inference                                                 ; On                      ; On                      ;
+; Allow RAMs Inferred In Generate-For Loop For Verilog                            ; Off                     ; Off                     ;
+; Enable formal verification support during compilation                           ; Off                     ; Off                     ;
+; Size of the PR Initial Conditions Report                                        ; 100                     ; 100                     ;
+; Number of Registers with Ignored Power-Up Settings Reported in Synthesis Report ; 500                     ; 500                     ;
+; Report PR Initial Values as Errors                                              ; Off                     ; Off                     ;
+; Fractal Synthesis                                                               ; Off                     ; Off                     ;
+; Aggressive Multiplexer Area Optimization                                        ; Auto                    ; Auto                    ;
+; 6LUT to Extended Mode Conversion                                                ; Auto                    ; Auto                    ;
+; Synthesis Available Resource Multiplier                                         ; 1                       ; 1                       ;
+; Message Level for Unconnected Output Ports                                      ; Warning                 ; Warning                 ;
+; Pack Barrelshifters into Carry Chains for Better Area                           ; Auto                    ; Auto                    ;
+; Initialize Verilog enums to X                                                   ; Off                     ; Off                     ;
+; Enable dynamic report                                                           ; Off                     ; Off                     ;
+; Show Collapsible Rows in Ascii Report for Warning Summary Reports               ; On                      ; On                      ;
+; Enable RTL Analysis Debug Mode                                                  ; Off                     ; Off                     ;
+; Enable preserve for debug assignments                                           ; Off                     ; Off                     ;
++---------------------------------------------------------------------------------+-------------------------+-------------------------+
+
+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Synthesis Source Files Read                                                                                                                                                                                                          ;
++----------------------------------+----------------------------------+---------------------------------------------------------------------------------------+---------+-----------+---------------+----------------------------------+
+; File Name with User-Entered Path ; File Type                        ; File Name with Absolute Path                                                          ; Library ; IP Source ; Include Files ; MD5                              ;
++----------------------------------+----------------------------------+---------------------------------------------------------------------------------------+---------+-----------+---------------+----------------------------------+
+; top_lcd_st7789.v                 ; User-Specified Verilog HDL File  ; C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/top_lcd_st7789.v                ;         ;           ;               ; 5142120387906ffa89a014e056c41a5a ;
+; spi_master.v                     ; User-Specified Verilog HDL File  ; C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/spi_master.v                    ;         ;           ;               ; b5c31aacb4005b3e6d6dd57b901bc8f5 ;
+; st7789_controller.v              ; User-Specified Verilog HDL File  ; C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/st7789_controller.v             ;         ;           ;               ; d570eb7690811006d6f96e594ddfd96f ;
+; gradient_gen.v                   ; User-Specified Verilog HDL File  ; C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/gradient_gen.v                  ;         ;           ;               ; e87428c5ca870de8a1b2a887372901ce ;
+; Chain1.cdf                       ; User-Specified File              ; C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/Chain1.cdf                      ;         ;           ;               ; 6f7634ed66630d4e9b299cfc6fd54d32 ;
+; output_files/st7789_init_fill.v  ; User-Specified Verilog HDL File  ; C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/output_files/st7789_init_fill.v ;         ;           ;               ; 7074bb7900780dc802150757c6475fba ;
+; output_files/spi_master_8bit.v   ; User-Specified Verilog HDL File  ; C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/output_files/spi_master_8bit.v  ;         ;           ;               ; 4afc94f8c0afbb0c06362710bb3663fa ;
++----------------------------------+----------------------------------+---------------------------------------------------------------------------------------+---------+-----------+---------------+----------------------------------+
+
+
++--------------------------------------------------------------------------------------------+
+; Synthesis Partition Summary                                                                ;
++----------------+----------------+---------+--------------+-------+-------------------------+
+; Partition Name ; Hierarchy Path ; Type    ; Preservation ; Empty ; Partition Database File ;
++----------------+----------------+---------+--------------+-------+-------------------------+
+; root_partition ; |              ; Default ;              ;       ;                         ;
++----------------+----------------+---------+--------------+-------+-------------------------+
+
+
+Top root causes of logic optimization that have been identified during sweep. For more details and filtering options, ensure that you have compiled with the "Enable RTL Analysis Debug Mode " setting turned on under Assignments->Settings->Compiler Settings, then go to the " Root Causes Tab " in the " Sweep Hints Viewer " tool in the " RTL Analyzer ".
++--------------------------------------------------------------------------------------------------------------+
+; Top Causes of Logic Optimized Away During Sweep                                                              ;
++------------------+------------------+--------------------------------------------------+---------------------+
+; Root Object Path ; Root Object Type ; Root Reason                                      ; Swept Objects Count ;
++------------------+------------------+--------------------------------------------------+---------------------+
+; delay_done       ; COMB (NOT)       ; wired through input !a[0] due to inverter        ; 0                   ;
+; i89              ; MUX21            ; modified: replaced duplicate inputs by constants ; 0                   ;
++------------------+------------------+--------------------------------------------------+---------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Partition "root_partition" Resource Utilization by Entity                                                                                                                              ;
++----------------------------+---------------------+---------------------------+-------------------+------------+------+-----------+---------------------+----------------+--------------+
+; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Max Depth ; Full Hierarchy Name ; Entity Name    ; Library Name ;
++----------------------------+---------------------+---------------------------+-------------------+------------+------+-----------+---------------------+----------------+--------------+
+; |                          ; 256 (256)           ; 110 (110)                 ; 0                 ; 0          ; 8    ; 5.4 (5.4) ; |                   ; top_lcd_st7789 ; altera_work  ;
++----------------------------+---------------------+---------------------------+-------------------+------------+------+-----------+---------------------+----------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++--------------------------------------------------------------------------+
+; State Machine - Summary                                                  ;
++--------------+------------------+------------+----------------+----------+
+; Name         ; Number of States ; Using aclr ; Encoding Style ; Safeness ;
++--------------+------------------+------------+----------------+----------+
+; return_state ; 9                ; Yes        ; One-Hot        ; Not Safe ;
+; state        ; 9                ; Yes        ; One-Hot        ; Not Safe ;
++--------------+------------------+------------+----------------+----------+
+
+
+Encoding Type:  One-Hot
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - return_state                                                                                                                                                                                                                            ;
++---------------------------+-------------------------+--------------------------+---------------------+-----------------------+---------------------+-------------------------+------------------------+---------------------+---------------------------+
+; Name                      ; return_state.S_SPI_WAIT ; return_state.S_POR_DELAY ; return_state.S_FILL ; return_state.S_WINDOW ; return_state.S_INIT ; return_state.S_RES_HIGH ; return_state.S_RES_LOW ; return_state.S_DONE ; return_state.S_DELAY_WAIT ;
++---------------------------+-------------------------+--------------------------+---------------------+-----------------------+---------------------+-------------------------+------------------------+---------------------+---------------------------+
+; return_state.S_DONE       ; 0                       ; 0                        ; 0                   ; 0                     ; 0                   ; 0                       ; 0                      ; 0                   ; 0                         ;
+; return_state.S_RES_LOW    ; 0                       ; 0                        ; 0                   ; 0                     ; 0                   ; 0                       ; 1                      ; 1                   ; 0                         ;
+; return_state.S_RES_HIGH   ; 0                       ; 0                        ; 0                   ; 0                     ; 0                   ; 1                       ; 0                      ; 1                   ; 0                         ;
+; return_state.S_INIT       ; 0                       ; 0                        ; 0                   ; 0                     ; 1                   ; 0                       ; 0                      ; 1                   ; 0                         ;
+; return_state.S_WINDOW     ; 0                       ; 0                        ; 0                   ; 1                     ; 0                   ; 0                       ; 0                      ; 1                   ; 0                         ;
+; return_state.S_FILL       ; 0                       ; 0                        ; 1                   ; 0                     ; 0                   ; 0                       ; 0                      ; 1                   ; 0                         ;
+; return_state.S_POR_DELAY  ; 0                       ; 1                        ; 0                   ; 0                     ; 0                   ; 0                       ; 0                      ; 1                   ; 0                         ;
+; return_state.S_DELAY_WAIT ; 0                       ; 0                        ; 0                   ; 0                     ; 0                   ; 0                       ; 0                      ; 1                   ; 1                         ;
+; return_state.S_SPI_WAIT   ; 1                       ; 0                        ; 0                   ; 0                     ; 0                   ; 0                       ; 0                      ; 1                   ; 0                         ;
++---------------------------+-------------------------+--------------------------+---------------------+-----------------------+---------------------+-------------------------+------------------------+---------------------+---------------------------+
+
+
+Encoding Type:  One-Hot
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - state                                                                                                                                                             ;
++--------------------+------------------+--------------+----------------+--------------+------------------+-----------------+--------------+-------------------+--------------------+
+; Name               ; state.S_SPI_WAIT ; state.S_FILL ; state.S_WINDOW ; state.S_INIT ; state.S_RES_HIGH ; state.S_RES_LOW ; state.S_DONE ; state.S_POR_DELAY ; state.S_DELAY_WAIT ;
++--------------------+------------------+--------------+----------------+--------------+------------------+-----------------+--------------+-------------------+--------------------+
+; state.S_POR_DELAY  ; 0                ; 0            ; 0              ; 0            ; 0                ; 0               ; 0            ; 0                 ; 0                  ;
+; state.S_DONE       ; 0                ; 0            ; 0              ; 0            ; 0                ; 0               ; 1            ; 1                 ; 0                  ;
+; state.S_RES_LOW    ; 0                ; 0            ; 0              ; 0            ; 0                ; 1               ; 0            ; 1                 ; 0                  ;
+; state.S_RES_HIGH   ; 0                ; 0            ; 0              ; 0            ; 1                ; 0               ; 0            ; 1                 ; 0                  ;
+; state.S_INIT       ; 0                ; 0            ; 0              ; 1            ; 0                ; 0               ; 0            ; 1                 ; 0                  ;
+; state.S_WINDOW     ; 0                ; 0            ; 1              ; 0            ; 0                ; 0               ; 0            ; 1                 ; 0                  ;
+; state.S_FILL       ; 0                ; 1            ; 0              ; 0            ; 0                ; 0               ; 0            ; 1                 ; 0                  ;
+; state.S_DELAY_WAIT ; 0                ; 0            ; 0              ; 0            ; 0                ; 0               ; 0            ; 1                 ; 1                  ;
+; state.S_SPI_WAIT   ; 1                ; 0            ; 0              ; 0            ; 0                ; 0               ; 0            ; 1                 ; 0                  ;
++--------------------+------------------+--------------+----------------+--------------+------------------+-----------------+--------------+-------------------+--------------------+
+
+
++----------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                     ;
++-----------------------------------+----------------------------------------+-----------+
+; Node name                         ; Reason for Removal                     ; Node Type ;
++-----------------------------------+----------------------------------------+-----------+
+; return_state~0                    ; Lost fanout                            ; Register  ;
+; return_state~1                    ; Lost fanout                            ; Register  ;
+; return_state~2                    ; Lost fanout                            ; Register  ;
+; state~0                           ; Lost fanout                            ; Register  ;
+; state~1                           ; Lost fanout                            ; Register  ;
+; state~2                           ; Lost fanout                            ; Register  ;
+; return_state.S_POR_DELAY          ; Merged with return_state.S_DELAY_WAIT  ; Register  ;
+; return_state.S_SPI_WAIT           ; Merged with return_state.S_DELAY_WAIT  ; Register  ;
+; return_state.S_DELAY_WAIT         ; Stuck at GND due to stuck port data_in ; Register  ;
+; Total Number of Removed Nodes = 9 ;                                        ;           ;
++-----------------------------------+----------------------------------------+-----------+
+
+
++------------------------------------------------------------+
+; General Register Statistics for Partition "root_partition" ;
++----------------------------------------------+-------------+
+; Statistic                                    ; Value       ;
++----------------------------------------------+-------------+
+; Total registers                              ; 110         ;
+; Number of registers using Synchronous Clear  ; 19          ;
+; Number of registers using Synchronous Load   ; 0           ;
+; Number of registers using Asynchronous Clear ; 110         ;
+; Number of registers using Asynchronous Load  ; 0           ;
+; Number of registers using Clock Enable       ; 74          ;
+; Number of registers using Preset             ; 0           ;
++----------------------------------------------+-------------+
+
+
++--------------------------------------------------+
+; Inverted Register Statistics                     ;
++----------------------------------------+---------+
+; Inverted Register                      ; Fan out ;
++----------------------------------------+---------+
+; lcd_res~reg0                           ; 2       ;
+; spi_cs_r                               ; 1       ;
+; Total number of inverted registers = 2 ;         ;
++----------------------------------------+---------+
+
+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                     ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------+-------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output ; Restructuring Performed ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------+-------------------------+
+; 3:1                ; 20 bits   ; 40 LEs        ; 20 LEs               ; 20 LEs                 ; Yes        ; delay_cnt[23]              ; Yes                     ;
+; 3:1                ; 4 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; delay_cnt[2]               ; Yes                     ;
+; 5:1                ; 3 bits    ; 9 LEs         ; 3 LEs                ; 6 LEs                  ; Yes        ; spi_bit_cnt[0]             ; Yes                     ;
+; 6:1                ; 7 bits    ; 28 LEs        ; 7 LEs                ; 21 LEs                 ; Yes        ; spi_shift[7]               ; Yes                     ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; spi_state[1]               ; Yes                     ;
+; 6:1                ; 3 bits    ; 12 LEs        ; 3 LEs                ; 9 LEs                  ; Yes        ; spi_bit_cnt[1]             ; Yes                     ;
+; 5:1                ; 3 bits    ; 9 LEs         ; 3 LEs                ; 6 LEs                  ; Yes        ; win_step[3]                ; Yes                     ;
+; 5:1                ; 17 bits   ; 51 LEs        ; 0 LEs                ; 51 LEs                 ; Yes        ; pixel_cnt[9]               ; Yes                     ;
+; 7:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; spi_data[7]                ; Yes                     ;
+; 5:1                ; 2 bits    ; 6 LEs         ; 4 LEs                ; 2 LEs                  ; Yes        ; delay_ms[5]                ; Yes                     ;
+; 5:1                ; 2 bits    ; 6 LEs         ; 4 LEs                ; 2 LEs                  ; Yes        ; delay_ms[2]                ; Yes                     ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; No         ; Select_26                  ; Yes                     ;
+; 8:1                ; 6 bits    ; 30 LEs        ; 12 LEs               ; 18 LEs                 ; No         ; Select_15                  ; Yes                     ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------+-------------------------+
+
+
++------------------------------------------------------------------------------------------------------------+
+; Multiplier Implementation Report                                                                           ;
++-----------------+---------------+---------------+----------------+--------+--------------------------------+
+; Multiplier Name ; Input A Width ; Input B Width ; Output O Width ; Target ; Reason                         ;
++-----------------+---------------+---------------+----------------+--------+--------------------------------+
+; mult_0          ; 8             ; 16            ; 24             ; logic  ; is a small constant multiplier ;
++-----------------+---------------+---------------+----------------+--------+--------------------------------+
+
+
++------------------------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Partition "root_partition" ;
++------------------------+-----------------------------------------+
+; Type                   ; Count                                   ;
++------------------------+-----------------------------------------+
+; boundary_port          ; 8                                       ;
+; tennm_ff               ; 110                                     ;
+;     CLR                ; 36                                      ;
+;     ENA CLR            ; 55                                      ;
+;     ENA CLR SCLR       ; 19                                      ;
+; tennm_lcell_comb       ; 256                                     ;
+;     arith              ; 106                                     ;
+;         0 data inputs  ; 10                                      ;
+;         1 data inputs  ; 61                                      ;
+;         2 data inputs  ; 19                                      ;
+;         3 data inputs  ; 8                                       ;
+;         4 data inputs  ; 8                                       ;
+;     extend             ; 3                                       ;
+;         8 data inputs  ; 3                                       ;
+;     normal             ; 147                                     ;
+;         1 data inputs  ; 5                                       ;
+;         2 data inputs  ; 14                                      ;
+;         3 data inputs  ; 39                                      ;
+;         4 data inputs  ; 27                                      ;
+;         5 data inputs  ; 30                                      ;
+;         6 data inputs  ; 32                                      ;
+;                        ;                                         ;
+; Number of carry chains ; 9                                       ;
+; Max carry chain length ; 24                                      ;
+;                        ;                                         ;
+; Max LUT depth          ; 5.40                                    ;
+; Average LUT depth      ; 3.18                                    ;
++------------------------+-----------------------------------------+
+
+
++-----------------------------------------------------------------+
+; Synthesis Resource Usage Summary for Partition "root_partition" ;
++---------------------------------------------+-------------------+
+; Resource                                    ; Usage             ;
++---------------------------------------------+-------------------+
+; Estimate of Logic utilization (ALMs needed) ; 146               ;
+;                                             ;                   ;
+; Combinational ALUT usage for logic          ; 256               ;
+;     -- 8 input functions                    ; 3                 ;
+;     -- 7 input functions                    ; 0                 ;
+;     -- 6 input functions                    ; 32                ;
+;     -- 5 input functions                    ; 30                ;
+;     -- 4 input functions                    ; 35                ;
+;     -- <=3 input functions                  ; 156               ;
+;                                             ;                   ;
+; Dedicated logic registers                   ; 110               ;
+;                                             ;                   ;
+; I/O pins                                    ; 8                 ;
+;                                             ;                   ;
+; Total DSP Blocks                            ; 0                 ;
+;     -- [A] Total Fixed Point DSP Blocks     ; 0                 ;
+;     -- [B] Total Floating Point DSP Blocks  ; 0                 ;
+;     -- [C] Total DSP_PRIME Blocks           ; 0                 ;
+;                                             ;                   ;
+; Maximum fan-out node                        ; clk_50m           ;
+; Maximum fan-out                             ; 110               ;
+; Total fan-out                               ; 1301              ;
+; Average fan-out                             ; 3.48              ;
++---------------------------------------------+-------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+; Warnings for top_lcd_st7789.v                                                                                                    ;
++------------+----------+-------+--------------------------------------------------------------------------------------------------+
+; Message ID ; Severity ; Count ; Sample Warning                                                                                   ;
++------------+----------+-------+--------------------------------------------------------------------------------------------------+
+; 16749      ; Warning  ; 1     ; Verilog HDL warning at top_lcd_st7789.v(43): identifier spi_state is used before its declaration ;
+; 24460      ; Warning  ; 6     ; Verilog HDL warning at top_lcd_st7789.v(308): select on function call violates IEEE 1800 syntax  ;
+;     24460  ;          ;       ; Verilog HDL warning at top_lcd_st7789.v(308): select on function call violates IEEE 1800 syntax  ;
+;     24460  ;          ;       ; Verilog HDL warning at top_lcd_st7789.v(311): select on function call violates IEEE 1800 syntax  ;
+;     24460  ;          ;       ; Verilog HDL warning at top_lcd_st7789.v(318): select on function call violates IEEE 1800 syntax  ;
+;     24460  ;          ;       ; Verilog HDL warning at top_lcd_st7789.v(319): select on function call violates IEEE 1800 syntax  ;
+;     24460  ;          ;       ; Verilog HDL warning at top_lcd_st7789.v(335): select on function call violates IEEE 1800 syntax  ;
+;     24460  ;          ;       ; Verilog HDL warning at top_lcd_st7789.v(336): select on function call violates IEEE 1800 syntax  ;
++------------+----------+-------+--------------------------------------------------------------------------------------------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; General Warnings                                                                                                                                                                                                                                                                                  ;
++------------+------------------+-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Message ID ; Severity         ; Count ; Sample Warning                                                                                                                                                                                                                                            ;
++------------+------------------+-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; 20759      ; Critical Warning ; 1     ; Use the Reset Release IP in Intel Agilex 5 FPGA designs to ensure a successful configuration. For more information about the Reset Release IP, refer to the Configuration User Guide.                                                                     ;
+; 21620      ; Warning          ; 1     ; Design Assistant Results: 1 of 1 High severity rules issued violations in snapshot 'partitioned'. Please refer to DRC report 'C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/output_files/top_lcd_st7789.drc.partitioned.rpt' for more information ;
++------------+------------------+-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Synthesis INI Usage                                                                                                                                                                                                                                                                                               ;
++----------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Option               ; Usage                                                                                                                                                                                                                                                                                      ;
++----------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Initialization file: ; c:/altera_pro/25.1.1/quartus/bin64/quartus.ini                                                                                                                                                                                                                                             ;
+; dev_password0        ; d0070c637d8467d216785497e7c00f870f7a1a12185e102e5e895c693de70841606127b3ca1ec5b729e9a2b25df63706a8f2a52ba85cfc9770f9c37f3b12233613224222356000434553430301145310420004273404241000430325566225442255633517555454203222702254455551500430554544754441                                       ;
+; dev_password1        ; d0070c637d8467d216785497e7c00f870f7a1a12185e102e5e895c693de70841606127b3db1ec5b729e9a2b25df63706a8f2a52ba85cfc9770f9c37f3b12233613224222356000434553430301145310420004273404241000430325566225442255633517555454203222702254455551500430554544754441                                       ;
+; dev_password2        ; d0070c637d8467d216785497e7c00f870f7a1a12185e102e5e895c693de70841606127bcff1ec5b729e9a2b25df63706a8f2a52ba85cfc9770f9c37f3b12233613224222356000434553430301145310420004273404241000430325566225442255633517555454203222702254455551500430554544754441                                       ;
+; dev_password3        ; d0070c637d8467d216785497e7c00f870f7a1a12185e102ebe009e3467d011d207d32f2a52bafaf86ec15616a984b8e9728a45b50281ece9912233613224222356000434553430301145310420004273404215535227542216233445555154261322232275455165501110551544175444                                                         ;
+; dev_password4        ; d0070c637d8467d216785491e1c00f870f7a1ae6099eac19d44978b7f5082a30304d35d5ba40adf229412a4e401e82a018f2a52b00b435b6647e6a984b8e40f7cacc1d25295ee122336132242223560004345534303011453100004233041052422324402224003245311015010425524235753251133544555514227122322257545516500100555144517445 ;
++----------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++--------------------+
+; Synthesis Messages ;
++--------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Synthesis
+    Info: Version 25.1.1 Build 125 07/31/2025 Patches 1.03 SC Pro Edition
+    Info: Processing started: Sun Sep  6 00:44:37 2026
+    Info: System process ID: 14532
+Info: Command: quartus_syn --read_settings_files=on --write_settings_files=off top_lcd_st7789 -c top_lcd_st7789
+Info: Using INI file c:/altera_pro/25.1.1/quartus/bin64/quartus.ini
+Info: qis_default_flow_script.tcl version: #1
+Info: Initializing Synthesis...
+Info: Project = "top_lcd_st7789"
+Info: Revision = "top_lcd_st7789"
+Info (21958): Initialized Quartus Message Database
+Info: Analyzing source files
+Warning (24460): Verilog HDL warning at top_lcd_st7789.v(308): select on function call violates IEEE 1800 syntax File: C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/top_lcd_st7789.v Line: 308
+Warning (24460): Verilog HDL warning at top_lcd_st7789.v(311): select on function call violates IEEE 1800 syntax File: C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/top_lcd_st7789.v Line: 311
+Warning (24460): Verilog HDL warning at top_lcd_st7789.v(318): select on function call violates IEEE 1800 syntax File: C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/top_lcd_st7789.v Line: 318
+Warning (24460): Verilog HDL warning at top_lcd_st7789.v(319): select on function call violates IEEE 1800 syntax File: C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/top_lcd_st7789.v Line: 319
+Warning (24460): Verilog HDL warning at top_lcd_st7789.v(335): select on function call violates IEEE 1800 syntax File: C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/top_lcd_st7789.v Line: 335
+Warning (24460): Verilog HDL warning at top_lcd_st7789.v(336): select on function call violates IEEE 1800 syntax File: C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/top_lcd_st7789.v Line: 336
+Warning (16749): Verilog HDL warning at top_lcd_st7789.v(43): identifier spi_state is used before its declaration File: C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/top_lcd_st7789.v Line: 43
+Critical Warning (20759): Use the Reset Release IP in Intel Agilex 5 FPGA designs to ensure a successful configuration. For more information about the Reset Release IP, refer to the Configuration User Guide.
+Info: Elaborating from top-level entity "top_lcd_st7789"
+Info: Found 6 design entities
+Info: There are 1 partitions after elaboration.
+Info: Running rule checking for Agilex5 protocol IPs...
+Info: DA report generation in native DNI mode
+Info (21615): Running Design Assistant Rules for snapshot 'partitioned'
+Info: No waiver waived any violations
+Info (22360): Design Assistant Results: 28 of 29 enabled rules passed, and 1 rules was disabled, in snapshot 'partitioned'
+Info (21660): Design Assistant Results: 0 of 19 Critical severity rules issued violations in snapshot 'partitioned'
+Warning (21620): Design Assistant Results: 1 of 1 High severity rules issued violations in snapshot 'partitioned'. Please refer to DRC report 'C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/output_files/top_lcd_st7789.drc.partitioned.rpt' for more information
+Info (21621): Design Assistant Results: 0 of 1 Medium severity rules issued violations in snapshot 'partitioned'
+Info (21622): Design Assistant Results: 0 of 8 Low severity rules issued violations in snapshot 'partitioned'
+Info: Synthesizing partition "root_partition"
+Info (20192): Inferred optimized multiplier from the following logic: "mult_0" 
+Info (17049): 6 registers lost all their fanouts during netlist optimizations.
+Info (21057): Implemented 273 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 2 input pins
+    Info (21059): Implemented 6 output pins
+    Info (21061): Implemented 265 logic cells
+Info: Successfully synthesized partition
+Info: Saving post-synthesis snapshots for 1 partition(s)
+Info (21615): Running Design Assistant Rules for snapshot 'synthesized'
+Info: No waiver waived any violations
+Info (22360): Design Assistant Results: 12 of 13 enabled rules passed, and 7 rules was disabled, in snapshot 'synthesized'
+Info (21661): Design Assistant Results: 0 of 1 High severity rules issued violations in snapshot 'synthesized'
+Info (21621): Design Assistant Results: 1 of 6 Medium severity rules issued violations in snapshot 'synthesized'. Please refer to DRC report 'C:/Users/wqshj/Desktop/FPGA_Pro/My_Verilog/learn/LCD1/output_files/top_lcd_st7789.drc.synthesized.rpt' for more information
+Info (21622): Design Assistant Results: 0 of 6 Low severity rules issued violations in snapshot 'synthesized'
+Info: Quartus Prime Synthesis was successful. 0 errors, 1 warning
+    Info: Peak virtual memory: 789 megabytes
+    Info: Processing ended: Sun Sep  6 00:44:49 2026
+    Info: Elapsed time: 00:00:12
+    Info: System process ID: 14532
+
+

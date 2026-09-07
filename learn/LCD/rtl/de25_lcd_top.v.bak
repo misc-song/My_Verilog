@@ -1,0 +1,331 @@
+//=============================================================================
+//  DE25-Nano + 2.0inch IPS (ST7789V, 240x320) 点亮工程
+//  ---------------------------------------------------------------------------
+//  屏幕模块:  LCDwiki 2.0inch IPS Module
+//            驱动 IC : ST7789V   分辨率 240x320   接口 4-line SPI (含 CS)
+//  显示内容:  全屏渐变 (R 随列 x, G 随行 y, B 随 x+y 对角) —— 便于验证方向/色彩
+//  SPI 参数:  Mode 0 (CPOL=0, CPHA=0), MSB first, 仅写
+//             SCLK = 50MHz / 8 = 6.25MHz
+//  像素格式:  RGB565 (COLMOD=0x05), 每像素 2 字节, 高字节在前
+//  像素总量:  240 x 320 = 76800 像素 = 153600 字节
+//
+//  端口说明(对应 GPIO0 40pin 扩展头):
+//    lcd_sclk -> GPIO_0[0] (header PIN 1,  FPGA PIN_H16)
+//    lcd_sda  -> GPIO_0[2] (header PIN 3,  FPGA PIN_C2 )
+//    lcd_res  -> GPIO_0[4] (header PIN 5,  FPGA PIN_Y2 )
+//    lcd_dc   -> GPIO_0[6] (header PIN 7,  FPGA PIN_L1 )
+//    lcd_cs   -> GPIO_0[8] (header PIN 9,  FPGA PIN_P2 )  (新增, 低电平使能)
+//    lcd_blk  -> GPIO_0[9] (header PIN 10, FPGA PIN_B3 )  (或屏幕 BLK 直接接 3.3V)
+//    屏 VCC   -> header PIN 29 (3.3V)
+//    屏 GND   -> header PIN 30 (GND)
+//=============================================================================
+module de25_lcd_top #(
+    parameter CLK_MS = 50_000        // 50MHz 下 1ms 对应的时钟数(仿真时改小加速)
+)(
+    input  wire clk_50m,             // 板载 50MHz 时钟 CLOCK1_50 (PIN_V16)
+    output wire lcd_sclk,            // SPI 时钟
+    output wire lcd_sda,             // SPI 数据 (MOSI)
+    output wire lcd_res,             // 屏幕复位, 低有效
+    output wire lcd_dc,              // 0 = 命令, 1 = 数据
+    output wire lcd_cs,              // 片选, 低有效(发送期间拉低)
+    output wire lcd_blk              // 背光, 高点亮
+);
+
+    //-------------------------------------------------------------------------
+    // 上电复位(纯内部, 无需按键; 约 10.5ms @50MHz)
+    //-------------------------------------------------------------------------
+    reg  [19:0] por_cnt = 20'd0;
+    reg         sys_rst_n = 1'b0;
+    always @(posedge clk_50m) begin
+        if (~por_cnt[19]) begin
+            por_cnt   <= por_cnt + 20'd1;
+            sys_rst_n <= 1'b0;
+        end else begin
+            sys_rst_n <= 1'b1;
+        end
+    end
+
+    //-------------------------------------------------------------------------
+    // SPI 写主机 (Mode 0, MSB first)
+    //  一拍 = 20ns @50MHz, 每字节 8 个 sclk 周期
+    //  sclk_div 3->4: 上升沿, 屏幕采样当前位
+    //  sclk_div 7->0: 下降沿; sclk_div==7 拍切换下一位数据(建立时间充裕)
+    //  bit_cnt==7 时结束字节, 保证每字节恰好 8 个 sclk 上升沿
+    //  CS 在字节发送期间拉低, 空闲拉高
+    //-------------------------------------------------------------------------
+    reg        spi_busy;
+    reg        spi_start;            // 主状态机发出的一拍脉冲
+    reg  [7:0] spi_tx_data;
+    reg        spi_tx_dc;
+    reg  [7:0] shreg;
+    reg  [2:0] sclk_div;
+    reg  [2:0] bit_cnt;
+    reg        sda_r, dc_r, cs_r;
+
+    assign lcd_sclk = sclk_div[2];   // 空闲为低 (Mode 0)
+    assign lcd_sda  = sda_r;
+    assign lcd_dc   = dc_r;
+    assign lcd_cs   = cs_r;
+
+    always @(posedge clk_50m) begin
+        if (!sys_rst_n) begin
+            spi_busy <= 1'b0;
+            sclk_div <= 3'd0;
+            bit_cnt  <= 3'd0;
+            sda_r    <= 1'b0;
+            dc_r     <= 1'b0;
+            cs_r     <= 1'b1;                    // 空闲 CS 高
+        end
+        else if (spi_start && !spi_busy) begin
+            spi_busy <= 1'b1;
+            sclk_div <= 3'd0;
+            bit_cnt  <= 3'd0;
+            dc_r     <= spi_tx_dc;
+            sda_r    <= spi_tx_data[7];          // 第一位先放到总线上
+            shreg    <= {spi_tx_data[6:0], 1'b0};
+            cs_r     <= 1'b0;                    // 拉低片选, 开始传输
+        end
+        else if (spi_busy) begin
+            sclk_div <= sclk_div + 3'd1;
+            if (sclk_div == 3'd7) begin          // 高电平期末(下降沿后), 切换数据
+                if (bit_cnt != 3'd7) begin
+                    sda_r <= shreg[7];
+                    shreg <= {shreg[6:0], 1'b0};
+                end
+                if (bit_cnt == 3'd7) begin
+                    spi_busy <= 1'b0;            // 8 位全部采样完毕
+                    cs_r     <= 1'b1;            // 释放片选
+                end
+                bit_cnt <= bit_cnt + 3'd1;
+            end
+        end
+    end
+
+    //-------------------------------------------------------------------------
+    // 初始化 ROM: 每条目 10bit {is_wait, dc, data[7:0]}
+    //   is_wait=1 : data 表示等待毫秒数
+    //   is_wait=0 : 发送一字节, dc=0 命令 / dc=1 数据
+    // 序列取自 ST7789V 官方初始化(lcdwiki 2.0inch 配套例程一致)
+    // 窗口: X 0..239 (CASET), Y 0..319 (RASET)
+    //-------------------------------------------------------------------------
+    reg  [7:0] init_idx;
+    reg  [9:0] init_entry;
+
+    always @(*) begin
+        case (init_idx)
+            //--- 软件复位与唤醒 ---
+            8'd0 : init_entry = {1'b0,1'b0,8'h01};      // SWRESET
+            8'd1 : init_entry = {1'b1,1'b0,8'd150};     // 等待 150ms
+            8'd2 : init_entry = {1'b0,1'b0,8'h11};      // SLPOUT
+            8'd3 : init_entry = {1'b1,1'b0,8'd120};     // 等待 120ms
+            //--- 基本设置 ---
+            8'd4 : init_entry = {1'b0,1'b0,8'h36};      // MADCTL: RGB 序, 竖屏
+            8'd5 : init_entry = {1'b0,1'b1,8'h00};
+            8'd6 : init_entry = {1'b0,1'b0,8'h3A};      // COLMOD
+            8'd7 : init_entry = {1'b0,1'b1,8'h05};      // 16bit/pixel (RGB565)
+            //--- 电源/时序调优(出厂值, 提升显示一致性) ---
+            8'd8 : init_entry = {1'b0,1'b0,8'hB2};      // PORCTRL
+            8'd9 : init_entry = {1'b0,1'b1,8'h0C};
+            8'd10: init_entry = {1'b0,1'b1,8'h0C};
+            8'd11: init_entry = {1'b0,1'b1,8'h00};
+            8'd12: init_entry = {1'b0,1'b1,8'h33};
+            8'd13: init_entry = {1'b0,1'b1,8'h33};
+            8'd14: init_entry = {1'b0,1'b0,8'hB7};      // GCTRL
+            8'd15: init_entry = {1'b0,1'b1,8'h35};
+            8'd16: init_entry = {1'b0,1'b0,8'hBB};      // VCOMS
+            8'd17: init_entry = {1'b0,1'b1,8'h19};
+            8'd18: init_entry = {1'b0,1'b0,8'hC0};      // LCMCTRL
+            8'd19: init_entry = {1'b0,1'b1,8'h2C};
+            8'd20: init_entry = {1'b0,1'b0,8'hC2};      // VDVVRHEN
+            8'd21: init_entry = {1'b0,1'b1,8'h01};
+            8'd22: init_entry = {1'b0,1'b0,8'hC3};      // VRHS
+            8'd23: init_entry = {1'b0,1'b1,8'h12};
+            8'd24: init_entry = {1'b0,1'b0,8'hC4};      // VDVS
+            8'd25: init_entry = {1'b0,1'b1,8'h20};
+            8'd26: init_entry = {1'b0,1'b0,8'hC6};      // FRCTRL2
+            8'd27: init_entry = {1'b0,1'b1,8'h0F};
+            8'd28: init_entry = {1'b0,1'b0,8'hD0};      // PWCTRL1
+            8'd29: init_entry = {1'b0,1'b1,8'hA4};
+            8'd30: init_entry = {1'b0,1'b1,8'hA1};
+            8'd31: init_entry = {1'b0,1'b0,8'hE0};      // PVGAMCTRL (正gamma)
+            8'd32: init_entry = {1'b0,1'b1,8'hD0};
+            8'd33: init_entry = {1'b0,1'b1,8'h04};
+            8'd34: init_entry = {1'b0,1'b1,8'h0D};
+            8'd35: init_entry = {1'b0,1'b1,8'h11};
+            8'd36: init_entry = {1'b0,1'b1,8'h13};
+            8'd37: init_entry = {1'b0,1'b1,8'h2B};
+            8'd38: init_entry = {1'b0,1'b1,8'h3F};
+            8'd39: init_entry = {1'b0,1'b1,8'h54};
+            8'd40: init_entry = {1'b0,1'b1,8'h4C};
+            8'd41: init_entry = {1'b0,1'b1,8'h18};
+            8'd42: init_entry = {1'b0,1'b1,8'h0D};
+            8'd43: init_entry = {1'b0,1'b1,8'h0B};
+            8'd44: init_entry = {1'b0,1'b1,8'h1F};
+            8'd45: init_entry = {1'b0,1'b1,8'h23};
+            8'd46: init_entry = {1'b0,1'b0,8'hE1};      // NVGAMCTRL (负gamma)
+            8'd47: init_entry = {1'b0,1'b1,8'hD0};
+            8'd48: init_entry = {1'b0,1'b1,8'h04};
+            8'd49: init_entry = {1'b0,1'b1,8'h0C};
+            8'd50: init_entry = {1'b0,1'b1,8'h11};
+            8'd51: init_entry = {1'b0,1'b1,8'h13};
+            8'd52: init_entry = {1'b0,1'b1,8'h2C};
+            8'd53: init_entry = {1'b0,1'b1,8'h3F};
+            8'd54: init_entry = {1'b0,1'b1,8'h44};
+            8'd55: init_entry = {1'b0,1'b1,8'h51};
+            8'd56: init_entry = {1'b0,1'b1,8'h2F};
+            8'd57: init_entry = {1'b0,1'b1,8'h1F};
+            8'd58: init_entry = {1'b0,1'b1,8'h1F};
+            8'd59: init_entry = {1'b0,1'b1,8'h20};
+            8'd60: init_entry = {1'b0,1'b1,8'h23};
+            8'd61: init_entry = {1'b0,1'b0,8'h21};      // INVON 反色开
+            //--- 设定显示窗口: X 0..239, Y 0..319 ---
+            8'd62: init_entry = {1'b0,1'b0,8'h2A};      // CASET (列地址)
+            8'd63: init_entry = {1'b0,1'b1,8'h00};
+            8'd64: init_entry = {1'b0,1'b1,8'h00};
+            8'd65: init_entry = {1'b0,1'b1,8'h00};
+            8'd66: init_entry = {1'b0,1'b1,8'hEF};      // X 终点 239
+            8'd67: init_entry = {1'b0,1'b0,8'h2B};      // RASET (行地址)
+            8'd68: init_entry = {1'b0,1'b1,8'h00};
+            8'd69: init_entry = {1'b0,1'b1,8'h00};
+            8'd70: init_entry = {1'b0,1'b1,8'h01};
+            8'd71: init_entry = {1'b0,1'b1,8'h3F};      // Y 终点 319
+            8'd72: init_entry = {1'b0,1'b0,8'h2C};      // RAMWR: 之后全是像素数据
+            default: init_entry = {1'b0,1'b0,8'h00};
+        endcase
+    end
+
+    //-------------------------------------------------------------------------
+    // 像素生成: 渐变图案 (240 x 320)
+    //   R(5bit) = x[7:3]    G(6bit) = y[8:3]    B(5bit) = (x+y)[8:4]
+    //-------------------------------------------------------------------------
+    reg  [7:0] px_x;                 // 0..239
+    reg  [8:0] px_y;                 // 0..319
+    reg        px_hi;                // 0=发高字节, 1=发低字节
+    wire [9:0] xy_sum = {1'b0, px_x} + {1'b0, px_y};
+    wire [4:0] px_r = px_x[7:3];
+    wire [5:0] px_g = px_y[8:3];
+    wire [4:0] px_b = xy_sum[8:4];
+    wire [7:0] hi_byte = {px_r, px_g[5:3]};   // RGB565 高字节
+    wire [7:0] lo_byte = {px_g[2:0], px_b};   // RGB565 低字节
+
+    //-------------------------------------------------------------------------
+    // 主状态机
+    //-------------------------------------------------------------------------
+    localparam S_IDLE    = 4'd0;
+    localparam S_RST_L   = 4'd1;
+    localparam S_RST_H   = 4'd2;
+    localparam S_INIT    = 4'd3;
+    localparam S_INIT_XF = 4'd4;
+    localparam S_WAIT    = 4'd5;
+    localparam S_FILL    = 4'd6;
+    localparam S_FILL_XF = 4'd7;
+    localparam S_DONE    = 4'd8;
+
+    reg  [3:0] state;
+    reg  [31:0] delay_cnt;
+    reg         res_r;
+    reg         all_done;
+    reg         busy_prev;           // 上一拍 spi_busy, 用于检测字节完成(下降沿)
+
+    assign lcd_res = res_r;
+    assign lcd_blk = 1'b1;           // 背光常亮
+
+    wire xfer_finish = !spi_busy && busy_prev;   // 一字节刚发送完成
+
+    always @(posedge clk_50m) busy_prev <= spi_busy;
+
+    always @(posedge clk_50m) begin
+        if (!sys_rst_n) begin
+            state     <= S_IDLE;
+            init_idx  <= 8'd0;
+            delay_cnt <= 32'd0;
+            px_x      <= 8'd0;
+            px_y      <= 9'd0;
+            px_hi     <= 1'b0;
+            res_r     <= 1'b0;
+            all_done  <= 1'b0;
+            spi_start <= 1'b0;
+        end
+        else begin
+            spi_start <= 1'b0;         // start 只发一拍
+            case (state)
+                //---- 硬件复位: RES 低 1ms 再拉高, 稳定 10ms ----
+                S_IDLE: state <= S_RST_L;
+                S_RST_L: begin
+                    if (delay_cnt >= CLK_MS) begin
+                        delay_cnt <= 32'd0;
+                        res_r     <= 1'b1;
+                        state     <= S_RST_H;
+                    end else delay_cnt <= delay_cnt + 32'd1;
+                end
+                S_RST_H: begin
+                    if (delay_cnt >= (CLK_MS * 32'd10)) begin
+                        delay_cnt <= 32'd0;
+                        init_idx  <= 8'd0;
+                        state     <= S_INIT;
+                    end else delay_cnt <= delay_cnt + 32'd1;
+                end
+                //---- 依次执行初始化 ROM ----
+                S_INIT: begin
+                    if (!spi_busy) begin
+                        if (init_entry[9]) begin              // 延时项
+                            delay_cnt <= {23'd0, init_entry[7:0]} * CLK_MS;
+                            init_idx  <= init_idx + 8'd1;
+                            state     <= S_WAIT;
+                        end else begin                        // 发送一字节
+                            spi_tx_data <= init_entry[7:0];
+                            spi_tx_dc   <= init_entry[8];
+                            spi_start   <= 1'b1;
+                            init_idx    <= init_idx + 8'd1;
+                            state       <= S_INIT_XF;
+                        end
+                    end
+                end
+                S_INIT_XF: begin
+                    if (xfer_finish) begin
+                        if (init_idx == 8'd73) state <= S_FILL;   // RAMWR 已发完
+                        else                  state <= S_INIT;
+                    end
+                end
+                S_WAIT: begin
+                    if (delay_cnt == 32'd0) state <= S_INIT;
+                    else                    delay_cnt <= delay_cnt - 32'd1;
+                end
+                //---- 填充 240x320 = 76800 像素 (RGB565, 每像素 2 字节) ----
+                S_FILL: begin
+                    if (!spi_busy) begin
+                        if (all_done) state <= S_DONE;
+                        else begin
+                            if (!px_hi) begin
+                                spi_tx_data <= hi_byte;
+                                px_hi       <= 1'b1;
+                            end else begin
+                                spi_tx_data <= lo_byte;
+                                px_hi       <= 1'b0;
+                                if (px_x == 8'd239) begin
+                                    px_x <= 8'd0;
+                                    if (px_y == 9'd319) all_done <= 1'b1;
+                                    else                px_y    <= px_y + 9'd1;
+                                end else begin
+                                    px_x <= px_x + 8'd1;
+                                end
+                            end
+                            spi_tx_dc <= 1'b1;                // 像素一律是数据
+                            spi_start <= 1'b1;
+                            state     <= S_FILL_XF;
+                        end
+                    end
+                end
+                S_FILL_XF: begin
+                    if (xfer_finish) begin
+                        if (all_done) state <= S_DONE;
+                        else          state <= S_FILL;
+                    end
+                end
+                S_DONE: ;                                    // 保持
+                default: state <= S_IDLE;
+            endcase
+        end
+    end
+
+endmodule

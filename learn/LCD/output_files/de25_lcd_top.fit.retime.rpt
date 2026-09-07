@@ -1,0 +1,174 @@
+Fitter Retime Stage Report for de25_lcd_top
+Sat Sep  5 14:26:08 2026
+Quartus Prime Version 25.1.1 Build 125 07/31/2025 Patches 1.03 SC Pro Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Hyper-Retimer Settings
+  3. Reset Sequence Requirement
+  4. Retiming Limit Summary
+  5. Critical Chain Summary for Clock Domain clk~derived
+  6. Hyper-Retimer INI Usage
+  7. Retime Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2025  Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus Prime License Agreement,
+the Altera IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Altera and sold by Altera or its authorized distributors.  Please
+refer to the Altera Software License Subscription Agreements 
+on the Quartus Prime software download page.
+
+
+
++--------------------------------------------------+
+; Hyper-Retimer Settings                           ;
++------------------------+---------+---------------+
+; Option                 ; Setting ; Default Value ;
++------------------------+---------+---------------+
+; Enable Auto-Pipelining ; On      ; On            ;
++------------------------+---------+---------------+
+
+
++-------------------------------------------+
+; Reset Sequence Requirement                ;
++-------------+-----------------------------+
+; Clock Name  ; Number of additional cycles ;
++-------------+-----------------------------+
+; clk~derived ; 2                           ;
++-------------+-----------------------------+
+Note: Due to retiming optimizations, a clock domain may require a longer reset sequence to ensure correct functionality.  The table above indicates the minimum number of additional reset sequence cycles needed for each clock domain.
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Retiming Limit Summary                                                                                                                                                                ;
++--------------------------+------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
+; Clock Transfer           ; Limiting Reason        ; Recommendation                                                                                                                    ;
++--------------------------+------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
+; Clock Domain clk~derived ; Insufficient Registers ; See the Fast Forward Timing Closure Recommendations report for step-by-step suggestions for RTL changes and estimated performance ;
++--------------------------+------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
+
+
+Critical Chain Summary for Clock Domain clk~derived
+===============================================================================
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Recommendations for Critical Chain                                                                                                                                                                                                                      ;
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Recommendation                                                                                                                                                                                                                                          ;
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; The critical chain is limited by: Insufficient Registers                                                                                                                                                                                                ;
+;                                                                                                                                                                                                                                                         ;
+; Reduce the delay of 'Long Paths' in the chain                                                                                                                                                                                                           ;
+;   or insert more pipeline stages for 'Long Paths' in the chain                                                                                                                                                                                          ;
+;   or remove retiming restrictions                                                                                                                                                                                                                       ;
+;    Refer to <a href='https://www.intel.com/content/www/us/en/docs/programmable/683353/current/insufficient-registers.html'>Insufficient Registers</a> in the <i>Intel Hyperflex Architecture High-Performance Design Handbook</i> for more information. ;
+;                                                                                                                                                                                                                                                         ;
+; Retiming Restrictions at Register #1:                                                                                                                                                                                                                   ;
+;  u_st7789_driver|cmd_idx[1]~RTMDUPLICATE                                                                                                                                                                                                                ;
+;   Node uses an asynchronous clear port                                                                                                                                                                                                                  ;
+;                                                                                                                                                                                                                                                         ;
+; Retiming Restrictions at Register #2:                                                                                                                                                                                                                   ;
+;  u_st7789_driver|delay_cnt[19]                                                                                                                                                                                                                          ;
+;   Node uses an asynchronous clear port                                                                                                                                                                                                                  ;
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Critical Chain Details                                                                                                                             ;
++----------------------+-------------------------+-------------+-------------------------------------------------------------------------------------+
+; Path Info            ; Register                ; Register ID ; Element                                                                             ;
++----------------------+-------------------------+-------------+-------------------------------------------------------------------------------------+
+; Retiming Restriction ; ALM Register            ; #1          ; u_st7789_driver|cmd_idx[1]~RTMDUPLICATE                                             ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|cmd_idx[1]~RTMDUPLICATE|q                                           ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|cmd_idx[1]~RTMDUPLICATE~_LAB_RE_X118_Y48_N0_I121                    ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|cmd_idx[1]~RTMDUPLICATE~_C1_X118_Y48_N0_I32                         ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|cmd_idx[1]~RTMDUPLICATE~_C1_X118_Y49_N0_I32                         ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|cmd_idx[1]~RTMDUPLICATE~_R0_X118_Y50_N0_I60                         ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|cmd_idx[1]~RTMDUPLICATE~_LOCAL_INTERCONNECT_X118_Y50_N0_I2          ;
+; Long Path (Critical) ; Bypassed Hyper-Register ;             ; u_st7789_driver|cmd_idx[1]~RTMDUPLICATE~_BLOCK_INPUT_MUX_PASSTHROUGH_X118_Y50_N0_I1 ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|cmd_idx[1]~RTMDUPLICATE~_LAB_RE_X118_Y50_N0_I5                      ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~101|datac                                                    ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~101|cout                                                     ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~106|cin                                                      ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~111|cout                                                     ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~116|cin                                                      ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~116|sumout                                                   ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~116~_LAB_RE_X118_Y50_N0_I97                                  ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~116~_R1_X118_Y50_N0_I9                                       ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~116~_R0_X117_Y50_N0_I16                                      ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~116~_R0_X117_Y50_N0_I68                                      ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~116~_LOCAL_INTERCONNECT_X117_Y50_N0_I39                      ;
+; Long Path (Critical) ; Bypassed Hyper-Register ;             ; u_st7789_driver|mult_0~116~_BLOCK_INPUT_MUX_PASSTHROUGH_X117_Y50_N0_I30             ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~116~_LAB_RE_X117_Y50_N0_I30                                  ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~21|datad                                                     ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~41|cout                                                      ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~46|cin                                                       ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~51|cout                                                      ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~26|cin                                                       ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~31|cout                                                      ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~56|cin                                                       ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~61|cout                                                      ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~66|cin                                                       ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~66|sumout                                                    ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~66~_LAB_RE_X117_Y50_N0_I122                                  ;
+; Long Path (Critical) ; Bypassed Hyper-Register ;             ; u_st7789_driver|mult_0~66~_C4_X117_Y46_N0_I35                                       ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~66~_R0_X117_Y46_N0_I60                                       ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~66~_LOCAL_INTERCONNECT_X117_Y46_N0_I15                       ;
+; Long Path (Critical) ; Bypassed Hyper-Register ;             ; u_st7789_driver|mult_0~66~_BLOCK_INPUT_MUX_PASSTHROUGH_X117_Y46_N0_I2               ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|mult_0~66~_LAB_RE_X117_Y46_N0_I0                                    ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|delay_cnt[19]~15|datae                                              ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|delay_cnt[19]~15|combout                                            ;
+; Long Path (Critical) ;                         ;             ; u_st7789_driver|delay_cnt[19]|d                                                     ;
+; Retiming Restriction ; ALM Register            ; #2          ; u_st7789_driver|delay_cnt[19]                                                       ;
++----------------------+-------------------------+-------------+-------------------------------------------------------------------------------------+
+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Hyper-Retimer INI Usage                                                                                                                                                                                                                                                                                           ;
++----------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Option               ; Usage                                                                                                                                                                                                                                                                                      ;
++----------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Initialization file: ; c:/altera_pro/25.1.1/quartus/bin64/quartus.ini                                                                                                                                                                                                                                             ;
+; dev_password0        ; d0070c637d8467d216785497e7c00f870f7a1a12185e102e5e895c693de70841606127b3ca1ec5b729e9a2b25df63706a8f2a52ba85cfc9770f9c37f3b12233613224222356000434553430301145310420004273404241000430325566225442255633517555454203222702254455551500430554544754441                                       ;
+; dev_password1        ; d0070c637d8467d216785497e7c00f870f7a1a12185e102e5e895c693de70841606127b3db1ec5b729e9a2b25df63706a8f2a52ba85cfc9770f9c37f3b12233613224222356000434553430301145310420004273404241000430325566225442255633517555454203222702254455551500430554544754441                                       ;
+; dev_password2        ; d0070c637d8467d216785497e7c00f870f7a1a12185e102e5e895c693de70841606127bcff1ec5b729e9a2b25df63706a8f2a52ba85cfc9770f9c37f3b12233613224222356000434553430301145310420004273404241000430325566225442255633517555454203222702254455551500430554544754441                                       ;
+; dev_password3        ; d0070c637d8467d216785497e7c00f870f7a1a12185e102ebe009e3467d011d207d32f2a52bafaf86ec15616a984b8e9728a45b50281ece9912233613224222356000434553430301145310420004273404215535227542216233445555154261322232275455165501110551544175444                                                         ;
+; dev_password4        ; d0070c637d8467d216785491e1c00f870f7a1ae6099eac19d44978b7f5082a30304d35d5ba40adf229412a4e401e82a018f2a52b00b435b6647e6a984b8e40f7cacc1d25295ee122336132242223560004345534303011453100004233041052422324402224003245311015010425524235753251133544555514227122322257545516500100555144517445 ;
++----------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------+
+; Retime Messages ;
++-----------------+
+Info (20030): Parallel compilation is enabled and will use 12 of the 12 processors detected
+Info: *******************************************************************
+Info: Running Quartus Prime Fitter
+    Info: Version 25.1.1 Build 125 07/31/2025 Patches 1.03 SC Pro Edition
+    Info: Processing started: Sat Sep  5 14:24:31 2026
+    Info: System process ID: 10208
+Info: Command: quartus_fit --read_settings_files=on --write_settings_files=off de25_lcd_top -c de25_lcd_top
+Info: Using INI file c:/altera_pro/25.1.1/quartus/bin64/quartus.ini
+Info: qfit2_default_script.tcl version: #1
+Info: Project  = de25_lcd_top
+Info: Revision = de25_lcd_top
+Info (17966): Starting Hyper-Retimer operations.
+Info (18914): The Hyper-Retimer was unable to optimize the design due to retiming restrictions. Run Fast Forward Timing Closure Recommendations to see step-by-step suggestions for design changes and show the estimated performance improvement from making these changes.
+Info (17968): Completed Hyper-Retimer operations.
+Info (18821): Fitter Hyper-Retimer operations ending: elapsed time is 00:00:01
+
+
